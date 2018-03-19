@@ -112,6 +112,8 @@ void setup() {
   char hostname[strlen(HOSTNAME_PREFIX)+6];
   uint16_t chipid = ESP.getChipId() & 0xFFFF;
   sprintf(hostname, "%s-%04x",HOSTNAME_PREFIX, chipid);
+
+  wifi_station_set_hostname(const_cast<char*>(hostname));
   
 #ifdef REMOTE_DEBUG
   Debug.begin(hostname);  // Initiaze the telnet server - hostname is the used
