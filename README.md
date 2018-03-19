@@ -2,6 +2,7 @@
 
 Fork of FastLED 3.1.3 library (included in this repo!):
 https://github.com/coryking/FastLED
+
 Using the fork so that we can use DMA (removes flicker issues). Enabled via `#define FASTLED_ESP8266_DMA`. You must use pin 3 for your led stripe!
 
 McLighting library:
