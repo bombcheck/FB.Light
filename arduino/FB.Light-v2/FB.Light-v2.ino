@@ -30,16 +30,22 @@
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>  //https://github.com/tzapu/WiFiManager
 
-#include <ArduinoOTA.h>
 #include <ESP8266mDNS.h>
 #include <FS.h>
 #include <WiFiClient.h>
 
 #include <Ticker.h>
-#include "RemoteDebug.h" //https://github.com/JoaoLopesF/RemoteDebug
+
+#ifdef REMOTE_DEBUG
+  #include "RemoteDebug.h" //https://github.com/JoaoLopesF/RemoteDebug
+#endif
 
 #include <WebSockets.h>  //https://github.com/Links2004/arduinoWebSockets
 #include <WebSocketsServer.h>
+
+#ifdef ENABLE_OTA
+  #include <ArduinoOTA.h>
+#endif
 
 // ***************************************************************************
 // Sub-modules of this application
@@ -54,6 +60,11 @@
 // ***************************************************************************
 ESP8266WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
+
+#ifdef HTTP_OTA
+  #include <ESP8266HTTPUpdateServer.h>
+  ESP8266HTTPUpdateServer httpUpdater;
+#endif
 
 // ***************************************************************************
 // Load library "ticker" for blinking status led
@@ -95,7 +106,7 @@ void configModeCallback(WiFiManager *myWiFiManager) {
 // ***************************************************************************
 // MAIN
 // ***************************************************************************
-void setup() {  
+void setup() {
   
   // Generate a pseduo-unique hostname
   char hostname[strlen(HOSTNAME_PREFIX)+6];
@@ -186,6 +197,7 @@ void setup() {
   // keep LED on
   digitalWrite(BUILTIN_LED, LOW);
 
+#ifdef ENABLE_OTA
   // ***************************************************************************
   // Setup: ArduinoOTA
   // ***************************************************************************
@@ -226,9 +238,10 @@ void setup() {
 
   ArduinoOTA.begin();
   DBG_OUTPUT_PORT.println("OTA Ready");
+#endif
+
   DBG_OUTPUT_PORT.print("IP address: ");
   DBG_OUTPUT_PORT.println(WiFi.localIP());
-
  
   // ***************************************************************************
   // Setup: MDNS responder
@@ -490,7 +503,11 @@ server.on("/fire", []() {
     }
     getStatusJSON();
   });
-  
+
+  #ifdef HTTP_OTA
+    httpUpdater.setup(&server,"/update");
+  #endif
+
   server.begin();
 
   paletteCount = getPaletteCount();
@@ -611,13 +628,16 @@ void loop() {
     //DBG_OUTPUT_PORT.printf("Show time is %ld\n", later-now);
     server.handleClient();  // Handle requests to the web server
     webSocket.loop();       // Handle websocket traffic
-    ArduinoOTA.handle();    // Handle OTA requests.
-#ifdef REMOTE_DEBUG
-    Debug.handle();         // Handle telnet server
-#endif         
+
+    #ifdef ENABLE_OTA
+      ArduinoOTA.handle();    // Handle OTA requests.
+    #endif
+    #ifdef REMOTE_DEBUG
+      Debug.handle();         // Handle telnet server
+    #endif         
     yield();                // Yield for ESP8266 stuff
 
- if (WiFi.status() != WL_CONNECTED) {
+    if (WiFi.status() != WL_CONNECTED) {
       // Blink the LED quickly to indicate WiFi connection lost.
       ticker.attach(0.1, tick);
      

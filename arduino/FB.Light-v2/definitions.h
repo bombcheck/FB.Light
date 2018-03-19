@@ -23,12 +23,14 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
+#define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
+//#define ENABLE_OTA    // If defined, enable Arduino OTA code.
 
 #define FASTLED_USE_PROGMEM 1
 #define FASTLED_ESP8266_RAW_PIN_ORDER
 #define FASTLED_ESP8266_DMA
 //#define FASTLED_ALLOW_INTERRUPTS 0
-#define FASTLED_INTERRUPT_RETRY_COUNT 1
+#define FASTLED_INTERRUPT_RETRY_COUNT 3
 
 // Note, you need to patch FastLEDs in order to use this.  You'll get an
 // error related to <avr\pgmspace.h>. Saves more than 3k given the palettes
@@ -42,7 +44,6 @@
 //      #endif
 //      #endif
 
-#define FASTLED_INTERRUPT_RETRY_COUNT 3
 #include "FastLED.h"
 #if defined(FASTLED_VERSION) && (FASTLED_VERSION < 3001000)
 #warning "Requires FastLED 3.1 or later; check github for latest code."
@@ -56,8 +57,8 @@
 //#define BUILTIN_LED 2
 //#define CLK_PIN   4
 #define LED_TYPE WS2812B
-#define COLOR_ORDER GRB
-#define NUM_LEDS 64
+#define COLOR_ORDER RGB
+#define NUM_LEDS 99
 #define MAX_CURRENT 3000  // limit to max current
 #define FASTLED_HZ 200    // maximum FASTLED refresh rate ( default = 400)
 CRGB leds[NUM_LEDS];
@@ -150,8 +151,8 @@ LEDState ledstates[NUM_LEDS]; // Get an array of led states to store the state o
 int16_t wipePos = 0;
 
 #ifdef REMOTE_DEBUG
-RemoteDebug Debug;
-#define DBG_OUTPUT_PORT Debug
+  RemoteDebug Debug;
+  #define DBG_OUTPUT_PORT Debug
 #else
-#define DBG_OUTPUT_PORT Serial
+  #define DBG_OUTPUT_PORT Serial
 #endif
