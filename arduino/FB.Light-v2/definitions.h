@@ -20,14 +20,14 @@
 // The LEDLAMP project is a fork of the McLighting Project at
 //        https://github.com/toblum/McLighting
 
-//#define FASTLED_ALLOW_INTERRUPTS 0
-
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
 
 #define FASTLED_USE_PROGMEM 1
 #define FASTLED_ESP8266_RAW_PIN_ORDER
+#define FASTLED_ESP8266_DMA
+//#define FASTLED_ALLOW_INTERRUPTS 0
 
 // Note, you need to patch FastLEDs in order to use this.  You'll get an
 // error related to <avr\pgmspace.h>. Saves more than 3k given the palettes
@@ -51,14 +51,14 @@
 
 //#define REMOTE_DEBUG
 
-#define DATA_PIN 1
+#define DATA_PIN 3
 //#define BUILTIN_LED 2
 //#define CLK_PIN   4
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
 #define NUM_LEDS 64
-#define MAX_CURRENT 2000  // limit to max current
-#define FASTLED_HZ 100    // maximum FASTLED refresh rate ( default = 400)
+#define MAX_CURRENT 3000  // limit to max current
+#define FASTLED_HZ 200    // maximum FASTLED refresh rate ( default = 400)
 CRGB leds[NUM_LEDS];
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))

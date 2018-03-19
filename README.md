@@ -1,7 +1,8 @@
 # FB.Light v2 Responsive Led Control
 
-FastLED 3.1.3 library:
-https://github.com/FastLED/FastLED
+Fork of FastLED 3.1.3 library (included in this repo!):
+https://github.com/coryking/FastLED
+Using the fork so that we can use DMA (removes flicker issues). Enabled via `#define FASTLED_ESP8266_DMA`. You must use pin 3 for your led stripe!
 
 McLighting library:
 https://github.com/toblum/McLighting
@@ -27,9 +28,9 @@ If you aren't familiar with how to setup your ESP8266, see the readme on McLight
 In short you will:
 
 1.  Configure the Arduino IDE to communicate with the ESP8266
-2.  Upload the sketch (from this repo) The sketch is setup for a 120 pixel WS2812B GRB LED Strip.   
+2.  Upload the sketch (from this repo) The sketch is setup for a 64 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled.   
     (change the applicable options in "definitions.h" to your desire)
-3.  Patch FastLED Library
+3.  Patch FastLED Library (no neccessary when using the library included in this repo!)
 
 ```arduino
 // Note, you need to patch FastLEDs in order to use this.  You'll get an
