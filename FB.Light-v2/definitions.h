@@ -27,6 +27,8 @@
 
 
 #define FASTLED_USE_PROGMEM 1
+#define FASTLED_ESP8266_RAW_PIN_ORDER
+
 // Note, you need to patch FastLEDs in order to use this.  You'll get an
 // error related to <avr\pgmspace.h>. Saves more than 3k given the palettes
 //
@@ -45,15 +47,16 @@
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-#define HOSTNAME_PREFIX "LEDCONTROL"
+#define HOSTNAME_PREFIX "FB-Light-v2"
 
 //#define REMOTE_DEBUG
 
-#define DATA_PIN 2
+#define DATA_PIN 1
+//#define BUILTIN_LED 2
 //#define CLK_PIN   4
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
-#define NUM_LEDS 120
+#define NUM_LEDS 64
 #define MAX_CURRENT 2000  // limit to max current
 #define FASTLED_HZ 100    // maximum FASTLED refresh rate ( default = 400)
 CRGB leds[NUM_LEDS];
