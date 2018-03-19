@@ -28,6 +28,7 @@
 #define FASTLED_ESP8266_RAW_PIN_ORDER
 #define FASTLED_ESP8266_DMA
 //#define FASTLED_ALLOW_INTERRUPTS 0
+#define FASTLED_INTERRUPT_RETRY_COUNT 1
 
 // Note, you need to patch FastLEDs in order to use this.  You'll get an
 // error related to <avr\pgmspace.h>. Saves more than 3k given the palettes
