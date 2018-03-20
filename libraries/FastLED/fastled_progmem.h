@@ -26,6 +26,7 @@ FASTLED_NAMESPACE_BEGIN
 #define FASTLED_INCLUDE_PGMSPACE 1
 #endif
 
+// Patched to be used by FB.Light v2
 #if FASTLED_INCLUDE_PGMSPACE == 1
 #if (defined(__AVR__))
 #include <avr\pgmspace.h>
