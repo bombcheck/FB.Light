@@ -14,7 +14,7 @@
 	</head>
 
 	<body>
-		<nav class="amber darken-2" role="navigation" id="mc-nav">
+		<nav class="grey darken-2" role="navigation" id="mc-nav">
 			<div class="nav-wrapper container"><a id="logo-container" href="#" class="brand-logo">FB.Light v2</a>
 				<ul class="right hide-on-med-and-down">
 					<li><a href="#" class="mc-navlink" data-pane="pane1">Wheel</a></li>
@@ -101,7 +101,7 @@
 									<button class="col s6 l2 btn_grid btn waves-effect waves-light blue-grey darken-1 btn_mode" name="action" data-mode="off">Off</button>
 									<button class="col s6 l3 btn_grid btn waves-effect waves-light blue-grey darken-1 btn_mode" name="action" data-mode="all">Solid Color</button>
 									<button class="col s12 l3 btn_grid btn waves-effect waves-light blue-grey darken-1 btn_mode" name="action" data-mode="mixedshow">random SHOW</button>
-									<!-- <button class="col s12 l3 btn_grid btn waves-effect waves-light blue-grey darken-1 btn_mode" name="action" data-mode="palette_anims">PALETTE ANIMATION</button> -->
+									<button class="col s12 l3 btn_grid btn waves-effect waves-light blue-grey darken-1 btn_mode" name="action" data-mode="palette_anims">PALETTE ANIMATION</button>
 								</div>
 							</div>
 							<div class="card-action blue-grey lighten-3">
@@ -128,7 +128,7 @@
 				</div>
 			</div>
 		
-			<!-- <div class="section">		
+			<div class="section">		
 				<div class="row">
 					<div class="col s12">
 						<div class="card blue-grey darken-1">
@@ -157,7 +157,7 @@
 						</div>
 					</div>
 				</div>
-			</div> -->			
+			</div>		
 						
 			<div class="section">
 				<div class="row">
@@ -300,7 +300,7 @@
 			</div>
 		</div>
 </div>
-		<footer class="page-footer blue-grey darken-1">
+		<footer class="page-footer grey darken-1">
 			<div class="footer-copyright">
 				<div class="container">
 					<div class="right"> 
@@ -534,13 +534,15 @@ $(function(){
 	});
 	
 	$("#pane2").on("change", ".update_brightness", function() {
-		var brightness = $("#rng_brightness").val();		
+		var brightness = $("#rng_brightness").val();
+		$("#rng_brightness_1").val(brightness);
 		
 		wsSendCommand("%" + brightness);
 	});
 
 	$("#pane1").on("change", ".update_brightness_1", function() {
 		var brightness = $("#rng_brightness_1").val();		
+		$("#rng_brightness").val(brightness);
 		
 		wsSendCommand("%" + brightness);
 	});
