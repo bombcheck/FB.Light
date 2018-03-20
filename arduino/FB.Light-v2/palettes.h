@@ -25,29 +25,40 @@ int paletteCount = 0;
 int getPaletteCount() {
   Dir dir = SPIFFS.openDir("/palettes");
   int palette_count = 0;
-  while (dir.next()) {
-    palette_count++;
+  if (dir) {
+    while (dir.next()) {
+      palette_count++;
+    }
+    DBG_OUTPUT_PORT.printf("Palette count: %d\n", palette_count);
+  } else {
+    DBG_OUTPUT_PORT.printf("Dir not found! Palette count: %d\n", palette_count);
   }
-  DBG_OUTPUT_PORT.printf("Palette count: %d\n", palette_count);
+    
   return palette_count;
 }
 
 bool openPaletteFileWithIndex(int index, File* file) {
   Dir dir = SPIFFS.openDir("/palettes");
-
   int palette_count = 0;
-  while (dir.next()) {
-    if (palette_count == index) break;
-    palette_count++;
-  }
-  
+
+  if (dir) {
+    while (dir.next()) {
+      if (palette_count == index) break;
+      palette_count++;
+    }
+
   if (palette_count != index) {
     DBG_OUTPUT_PORT.println("Error, unable to open palette");
     return false;
   }
   
-  *file = dir.openFile("r");
-  return true; //success
+    *file = dir.openFile("r");
+    return true; //success
+  } else {
+
+    DBG_OUTPUT_PORT.println("Error, unable to open palette dir");
+    return false;
+  }
 }
 
 bool loadPaletteFromFile(int index, CRGBPalette16* palette) {
@@ -75,14 +86,14 @@ bool loadPaletteFromFile(int index, CRGBPalette16* palette) {
   return true;
 }
 
-
 String getPaletteNameWithIndex(int index) {
   Dir dir = SPIFFS.openDir("/palettes");
-
   int ndx = 0;
-  while (dir.next()) {
-    if (ndx == index) return dir.fileName();
-    ndx++;
+  if (dir) {
+    while (dir.next()) {
+      if (ndx == index) return dir.fileName();
+      ndx++;
+    }
   }
   return "[unknown]";
 }
