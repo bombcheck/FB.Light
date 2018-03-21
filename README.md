@@ -1,9 +1,13 @@
-# FB.Light v2 Responsive Led Control
+# FB.Light v2 Responsive LED Control
 
-Fork of FastLED 3.1.3 library (included in this repo!):
+Using this while playing around with WS2812-LEDs. Currently building a nice RGB-LED-Lamp (milk glass / 11x8 LEDs) with it.
+
+## Used libraries / software
+
+Fork of FastLED 3.1.3 library (included in this repo: see libraries-folder!):
 https://github.com/coryking/FastLED
 
-Using the fork so that we can use DMA (removes flicker issues). Enabled via `#define FASTLED_ESP8266_DMA`. You must use pin 3 for your led stripe!
+We are using this fork because it supports DMA which removes flicker issues. Enabled via `#define FASTLED_ESP8266_DMA`. You must use pin 3 for your LED stripe!
 
 McLighting library:
 https://github.com/toblum/McLighting
@@ -11,7 +15,7 @@ https://github.com/toblum/McLighting
 Russel's implementation:
 https://github.com/russp81/LEDLAMP_FASTLEDs
 
-Jakes's "Grisworld" Led Controller
+Jakes's "Grisworld" LED Controller
 https://github.com/jake-b/Griswold-LED-Controller
 
 jscolor Color Picker:
@@ -23,6 +27,7 @@ http://fastled.io/tools/paletteknife/
 RemoteDebug:
 https://github.com/JoaoLopesF/RemoteDebug
 
+## How to start
 
 If you aren't familiar with how to setup your ESP8266, see the readme on McLighting's git.  It's well written and should get you up and running.
 
@@ -54,7 +59,7 @@ In short you will:
     of the ESP followed by "/edit" (i.e. 192.168.1.20/edit).  Then upload the files from the folder labeled "upload these" from this         repo. 
 6.  Once you have finished uploading, type in the IP of the ESP into your browser and you should be up and running!
 
-# License
+## License
 
 As per the original [McLighting](https://github.com/toblum/McLighting) and [Jake's "Grisworld"](https://github.com/jake-b/Griswold-LED-Controller) project, this project is released under the GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007.
 
@@ -71,6 +76,6 @@ As per the original [McLighting](https://github.com/toblum/McLighting) and [Jake
 	You should have received a copy of the GNU Lesser General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Palettes on SPIFFS
+## Palettes on SPIFFS
 
 Normally, you use [PaletteKnife](http://fastled.io/tools/paletteknife/) to generate arrays with the palette info.  You then compile this data into your project.  I wanted to be able to update the palettes without recompiling, so I moved them to files in SPIFFS (/palettes directory).  There is a little python program that basically takes the logic from PaletteKnife and outputs a binary file with the palette data instead.  Load these binary files to SPIFFS using the [Arduino ESP8266 filesystem uploader](https://github.com/esp8266/arduino-esp8266fs-plugin) or manually.
