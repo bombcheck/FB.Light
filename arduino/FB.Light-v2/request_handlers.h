@@ -118,10 +118,10 @@ void handleNotFound() {
 }
 
 char* listStatusJSON() {
-  char json[512];
+  char json[532];
   File file;
   openPaletteFileWithIndex(currentPaletteIndex, &file); 
-  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d,\"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"palette_name\": \"%s\", \"glitter_wipe_on\": %d}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, file.name(), settings.glitter_wipe_on);
+  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d,\"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"palette_name\": \"%s\", \"glitter_wipe_on\": %d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, file.name(), settings.glitter_wipe_on, FW_VERSION);
   file.close();
   return json;
 }

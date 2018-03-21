@@ -23,6 +23,8 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
+#define FW_VERSION "v0.9 beta 2"
+
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
 

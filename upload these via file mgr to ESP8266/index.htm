@@ -302,7 +302,7 @@
 </div>
 		<footer class="page-footer grey darken-1">
 			<div class="footer-copyright">
-				<div class="container">
+				<div class="container"><label class="fw_version grey-text text-lighten-4"></label>
 					<div class="right"> 
 						<a class="grey-text text-lighten-4" href="https://github.com/bombcheck/FB.Light-v2">Project-Website</a>
 					</div>
@@ -402,7 +402,7 @@ $(function(){
 			if (last_pane) { 
 				showPane(last_pane);
 			} else {
-				showPane('pane1');
+				showPane('pane2');
 			}
 		};
 
@@ -459,6 +459,7 @@ $(function(){
 				
 				$("#switch_glitter_wipe")[0].checked = obj.glitter_wipe_on;
 				
+				$(".fw_version").text(obj.fw_version);
 			} else if (e.data.charAt(0) == 'p') {
 				console.log('Palette name message: \'' + e.data + '\'');
 				$(".palette_name").text(e.data.substring(1));
@@ -492,11 +493,11 @@ $(function(){
 		var mode = $(this).attr("data-mode");
 		last_mode = mode;
 		var btn = $(this);
-	
-	 
+		 
 		setMode(mode, function() {
 			$(".btn_mode").removeClass("isactive");
 			btn.addClass("isactive");
+			if (mode == "all") 	showPane('pane1');
 		});
 	});
 
