@@ -305,7 +305,7 @@
 </div>
 		<footer class="page-footer grey darken-1">
 			<div class="footer-copyright">
-				<div class="container"><label class="fw_version grey-text text-lighten-4"></label><br><label class="ui_version grey-text text-lighten-4">UI: v0.9 beta 7</label>
+				<div class="container"><label class="fw_version grey-text text-lighten-4"></label><br><label class="ui_version grey-text text-lighten-4">User: 00.09.00.b7</label>
 					<div class="right"> 
 						<a class="grey-text text-lighten-4" href="https://github.com/bombcheck/FB.Light-v2">Project-Website</a>
 					</div>
@@ -462,7 +462,7 @@ $(function(){
 				
 				$("#switch_glitter_wipe")[0].checked = obj.glitter_wipe_on;
 				
-				$(".fw_version").text("FW: " + obj.fw_version);
+				$(".fw_version").text("Core: " + obj.fw_version);
 			} else if (e.data.charAt(0) == 'p') {
 				console.log('Palette name message: \'' + e.data + '\'');
 				$(".palette_name").text(e.data.substring(1));
