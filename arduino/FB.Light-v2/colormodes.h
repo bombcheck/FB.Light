@@ -79,7 +79,7 @@ void sinelon() {
 
 void bpm() {
   // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
-  uint8_t BeatsPerMinute = 62;
+  uint8_t BeatsPerMinute = settings.show_length;
   CRGBPalette16 palette = PartyColors_p;
   uint8_t beat = beatsin8(BeatsPerMinute, 64, settings.effect_brightness);
   for (int i = 0; i < NUM_LEDS; i++) {  // 9948

@@ -61,7 +61,7 @@ uint16_t crc16Update(uint16_t crc, uint8_t a) {
 
 void loadDefaults() {
   settings.mode = OFF;
-  settings.fps = 50;  // Global variable for storing the frames per second
+  settings.fps = 25;  // Global variable for storing the frames per second
   settings.overall_brightness = 80;  // Global variable for storing the brightness (255 == 100%)
   settings.effect_brightness = 80;  // Global variable for storing the palette brightness (255 == 100%)
   settings.show_length = 15;  // Global variable for storing the show_time (in seconds)
