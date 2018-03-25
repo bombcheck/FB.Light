@@ -56,7 +56,7 @@ In short you will:
 4.  On first launch, the ESP8266 will advertise it's own WiFi network for you to connect to, once you connect to it, launch your browser
     and the web interface is self explanatory.  (If the interface doesn't load, type in "192.168.4.1" into your browser and hit go)
 5.  Once the ESP is on your wifi network, you can then upload the required files for the web interface by typing the in IP address
-    of the ESP followed by "/edit" (i.e. 192.168.1.20/edit).  Then upload the files from the folder labeled "upload these" from this         repo. 
+    of the ESP followed by "/upload" (i.e. 192.168.1.20/upload).  Then upload the files from the folder labeled "upload these" from this         repo. 
 6.  Once you have finished uploading, type in the IP of the ESP into your browser and you should be up and running!
 
 ## License
