@@ -37,10 +37,10 @@ If you aren't familiar with how to setup your ESP8266, see the readme on McLight
 
 In short you will:
 
-1.  Configure the Arduino IDE to communicate with the ESP8266
-2.  Upload the sketch (from this repo) The sketch is setup for a 99 pixel WS2812B RGB LED Strip on pin 3 with DMA enabled.   
-    (change the applicable options in "definitions.h" to your desire)
-3.  Patch FastLED Library (not neccessary when using the library included in this repo!)
+1.  Configure the Arduino IDE to communicate with the ESP8266.
+2.  Upload the sketch (from this repo). The sketch is setup for a 99 pixel WS2812B RGB LED Strip on pin 3 with DMA enabled.   
+    (change the applicable options in "definitions.h" to your desire).
+3.  Patch FastLED Library (not neccessary when using the library included in this repo!):
 
 ```arduino
 // Note, you need to patch FastLEDs in order to use this.  You'll get an
@@ -57,15 +57,15 @@ In short you will:
 #endif
 ```
 
-4.  On first launch, the ESP8266 will advertise it's own WiFi network for you to connect to, once you connect to it, launch your browser
-    and the web interface is self explanatory.  (If the interface doesn't load, type in "192.168.4.1" into your browser and hit go)
-5.  Once the ESP is on your wifi network, you can then upload the required files for the web interface by typing the in IP address
-    of the ESP followed by "/upload" (i.e. 192.168.1.20/upload).  Then upload the files from the folder labeled "upload these" from this         repo. 
+4.  On first launch, the ESP8266 will advertise it's own WiFi network for you to connect to. Once you connect to it, launch your browser
+    and the web interface is self explanatory. (If the interface doesn't load, type in "192.168.4.1" into your browser and hit go).
+5.  Once the ESP is on your wifi network, you can then upload the required files for the web interface by typing the IP address
+    of the ESP followed by "/upload" (i.e. 192.168.1.20/upload).  Then upload the files from the folder labeled "upload these" from this         repo.
 6.  Once you have finished uploading, type in the IP of the ESP into your browser and you should be up and running!
 
 ## Updating the firmware
 
-After the first flash, you can update the firmware via OTA by typing the in IP address of the ESP followed by "/update" (i.e. 192.168.1.20/update). WIFI config and uploaded files will stay untouched.
+After the first flash, you can update the firmware via OTA by typing the IP address of the ESP followed by "/update" (i.e. 192.168.1.20/update). WIFI config and uploaded files will stay untouched.
 
 ## License
 
