@@ -27,8 +27,8 @@
 #pragma pack(1)     // set alignment to 1 byte boundary
 typedef struct {
   MODE mode;
-  uint8_t fps = 50;  // Global variable for storing the frames per second
-  uint8_t overall_brightness = 255;  // Global variable for storing the brightness (255 == 100%)
+  uint8_t fps = 25;  // Global variable for storing the frames per second
+  uint8_t overall_brightness = 80;  // Global variable for storing the brightness (255 == 100%)
   uint8_t show_length = 15;  // Global variable for storing the show_time (in seconds)
   uint8_t ftb_speed = 50;        // Global variable for fade to black speed
   uint8_t glitter_density = 50;  // Global variable for glitter density
@@ -36,7 +36,7 @@ typedef struct {
   LEDState main_color;  // Store the "main color" of the strip used in single
   // color modes
   LEDState glitter_color;  // Store the "glitter color" of the strip for glitter mode
-  uint8_t effect_brightness = 255;  // Brightness used for effect animations
+  uint8_t effect_brightness = 80;  // Brightness used for effect animations
   int8_t palette_ndx = -1; // Palette to use for PALETTE_ANIMS.  -1 is change periodically
   uint8_t confetti_dens = 1;  // Density for the confetti effect.  More confetti needed for longer strings.
   bool glitter_wipe_on = false;
@@ -61,7 +61,7 @@ uint16_t crc16Update(uint16_t crc, uint8_t a) {
 
 void loadDefaults() {
   settings.mode = OFF;
-  settings.fps = 50;  // Global variable for storing the frames per second
+  settings.fps = 25;  // Global variable for storing the frames per second
   settings.overall_brightness = 80;  // Global variable for storing the brightness (255 == 100%)
   settings.effect_brightness = 80;  // Global variable for storing the palette brightness (255 == 100%)
   settings.show_length = 15;  // Global variable for storing the show_time (in seconds)
