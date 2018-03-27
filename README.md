@@ -1,10 +1,10 @@
-# FB.Light v2 Responsive LED Control
+# FB.Light Responsive LED Control
 
 Using this while playing around with WS2812-LEDs. Build a nice RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
 
-![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light-v2/confetti_1_small.gif)
-![BPM-Mode](https://breakout.bernis-hideout.de/git/FB.Light-v2/bpm_small.gif)
-![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light-v2/juggle_small.gif)
+![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light/confetti_1_small.gif)
+![BPM-Mode](https://breakout.bernis-hideout.de/git/FB.Light/bpm_small.gif)
+![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light/juggle_small.gif)
 
 ## Used libraries / software
 

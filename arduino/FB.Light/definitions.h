@@ -1,5 +1,5 @@
-// FB.Light v2 Responsive LED Control
-// https://github.com/bombcheck/FB.Light-v2
+// FB.Light Responsive LED Control
+// https://github.com/bombcheck/FB.Light
 //
 // Forked from doctormord's Responsive Led Control
 // https://github.com/doctormord/Responsive_LED_Control
@@ -49,7 +49,7 @@
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-#define HOSTNAME_PREFIX "FB-Light-v2"
+#define HOSTNAME_PREFIX "FB-Light"
 
 //#define REMOTE_DEBUG
 
