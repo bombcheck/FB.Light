@@ -38,7 +38,7 @@ If you aren't familiar with how to setup your ESP8266, see the readme on McLight
 In short you will:
 
 1.  Configure the Arduino IDE to communicate with the ESP8266.
-2.  Upload the sketch (from this repo). The sketch is setup for a 99 pixel WS2812B RGB LED Strip on pin 3 with DMA enabled.   
+2.  Upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled.   
     (change the applicable options in "definitions.h" to your desire).
 3.  Patch FastLED Library (not neccessary when using the library included in this repo!):
 

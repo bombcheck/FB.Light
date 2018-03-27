@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.00.b6"
+#define FW_VERSION "00.09.00.b7"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
@@ -57,8 +57,8 @@
 //#define BUILTIN_LED 2
 //#define CLK_PIN   4
 #define LED_TYPE WS2812B
-#define COLOR_ORDER RGB
-#define NUM_LEDS 99
+#define COLOR_ORDER GRB
+#define NUM_LEDS 88
 #define MAX_CURRENT 3000  // limit to max current
 #define FASTLED_HZ 400    // maximum FASTLED refresh rate ( default = 400)
 CRGB leds[NUM_LEDS];
@@ -74,7 +74,6 @@ enum MODE { HOLD,
     SINELON,
     JUGGLE,
     BPM,
-    PALETTE_ANIMS,
     RIPPLE,
     COMET,
     THEATERCHASE,
@@ -102,15 +101,6 @@ long theaterMillis = 0;
 long paletteMillis = 0; // Global variable for timechecking color palette shifts
 //bool exit_func = false; // Global helper variable to get out of the color modes when mode changes
 //bool GLITTER_ON = false;        // Global to add / remove glitter to any animation
-
-//******Palette Animation Globals*******************************************
-uint8_t targetPaletteIndex;
-uint8_t currentPaletteIndex;
-uint8_t colorIndex;
-DIRECTION anim_direction = FORWARD;
-CRGBPalette16 currentPalette;
-CRGBPalette16 targetPalette;
-TBlendType currentBlending;
 
 //***************************************************************************
 

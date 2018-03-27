@@ -117,11 +117,7 @@ void handleNotFound() {
 
 char* listStatusJSON() {
   char json[512];
-//  File file;
-//  openPaletteFileWithIndex(currentPaletteIndex, &file); 
-//  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d,\"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"palette_name\": \"%s\", \"glitter_wipe_on\": %d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, file.name(), settings.glitter_wipe_on, FW_VERSION);
-  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d,\"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"glitter_wipe_on\": %d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, settings.glitter_wipe_on, FW_VERSION);
-//  file.close();
+  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d,\"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, FW_VERSION);
   return json;
 }
 
@@ -294,13 +290,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         if (str_mode.startsWith("=bpm")) {
           settings.mode = BPM;
         }  
-        if (str_mode.startsWith("=palette_anims")) {
-          if (settings.palette_ndx != -1) {
-             currentPaletteIndex = settings.palette_ndx;
-             loadPaletteFromFile(settings.palette_ndx, &targetPalette);
-          }
-          settings.mode = PALETTE_ANIMS;
-        }   
         if (str_mode.startsWith("=ripple")) {
           settings.mode = RIPPLE;
         }   
@@ -315,12 +304,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         }
         if (str_mode.startsWith("=stop_glitter")) {
           settings.glitter_on = false;
-        }                                                                                   
-        if (str_mode.startsWith("=start_glitter_wipe")) {
-          settings.glitter_wipe_on = true;
-        }                                                                                   
-        if (str_mode.startsWith("=stop_glitter_wipe")) {
-          settings.glitter_wipe_on = false;
         }                                                                                   
         if (str_mode.startsWith("=wipe")) {
           settings.mode = WIPE;
@@ -377,52 +360,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         DBG_OUTPUT_PORT.printf("Load settings.");
         readSettings(false);
         
-        String json = listStatusJSON();
-        DBG_OUTPUT_PORT.println(json);
-        webSocket.sendTXT(num, json);
-      }
-
-      // { ==> Change palette
-      if (payload[0] == '{') {
-        if (length == 2) {
-          if (payload[1] == '+') {
-            DBG_OUTPUT_PORT.printf("Current pallet_ndx=%d\n", settings.palette_ndx);      
-            settings.palette_ndx++;
-            if (settings.palette_ndx >= paletteCount) {
-              settings.palette_ndx = 0;              
-            }
-            
-            targetPaletteIndex = settings.palette_ndx;
-            loadPaletteFromFile(settings.palette_ndx, &targetPalette);
-            
-            if (settings.glitter_wipe_on) {
-              wipeInProgress = true;
-            }
-            
-            DBG_OUTPUT_PORT.printf("Next palette: %d\n", settings.palette_ndx);            
-            } else if (payload[1] == '-') {
-            DBG_OUTPUT_PORT.printf("Current pallet_ndx=%d\n", settings.palette_ndx);      
-            settings.palette_ndx--;
-            if (settings.palette_ndx < 0) {
-              settings.palette_ndx = paletteCount-1;              
-            }
-            
-            targetPaletteIndex = settings.palette_ndx;
-            loadPaletteFromFile(settings.palette_ndx, &targetPalette);
-            
-            if (settings.glitter_wipe_on) {
-              wipeInProgress = true;
-            }
-            DBG_OUTPUT_PORT.printf("Next palette: %d\n", settings.palette_ndx);            
-            } else if (payload[1] == 'r') {
-            DBG_OUTPUT_PORT.printf("Randomize palette.\n");
-            settings.palette_ndx = -1;          
-            ChangePalettePeriodically(true);
-          } else if (payload[1] == 'd') {
-            DBG_OUTPUT_PORT.printf("Change direction: %d\n", anim_direction);
-            anim_direction = (DIRECTION)!anim_direction;
-          }
-        }
         String json = listStatusJSON();
         DBG_OUTPUT_PORT.println(json);
         webSocket.sendTXT(num, json);
