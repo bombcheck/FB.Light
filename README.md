@@ -25,9 +25,6 @@ https://github.com/jake-b/Griswold-LED-Controller
 jscolor Color Picker:
 http://jscolor.com/
 
-FastLED Palette Knife:
-http://fastled.io/tools/paletteknife/
-
 RemoteDebug:
 https://github.com/JoaoLopesF/RemoteDebug
 
@@ -87,7 +84,3 @@ As per the original [McLighting](https://github.com/toblum/McLighting) and [Jake
 
 	You should have received a copy of the GNU Lesser General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-## Palettes on SPIFFS
-
-Normally, you use [PaletteKnife](http://fastled.io/tools/paletteknife/) to generate arrays with the palette info.  You then compile this data into your project.  I wanted to be able to update the palettes without recompiling, so I moved them to files in SPIFFS (/palettes directory).  There is a little python program that basically takes the logic from PaletteKnife and outputs a binary file with the palette data instead.  Load these binary files to SPIFFS using the [Arduino ESP8266 filesystem uploader](https://github.com/esp8266/arduino-esp8266fs-plugin) or manually.
