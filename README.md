@@ -25,9 +25,6 @@ https://github.com/jake-b/Griswold-LED-Controller
 jscolor Color Picker:
 http://jscolor.com/
 
-FastLED Palette Knife:
-http://fastled.io/tools/paletteknife/
-
 RemoteDebug:
 https://github.com/JoaoLopesF/RemoteDebug
 
@@ -38,8 +35,8 @@ If you aren't familiar with how to setup your ESP8266, see the readme on McLight
 In short you will:
 
 1.  Configure the Arduino IDE to communicate with the ESP8266.
-2.  Upload the sketch (from this repo). The sketch is setup for a 99 pixel WS2812B RGB LED Strip on pin 3 with DMA enabled.   
-    (change the applicable options in "definitions.h" to your desire).
+2.  Upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled.   
+    (change the applicable options in `definitions.h` to your desire).
 3.  Patch FastLED Library (not neccessary when using the library included in this repo!):
 
 ```arduino
@@ -60,12 +57,16 @@ In short you will:
 4.  On first launch, the ESP8266 will advertise it's own WiFi network for you to connect to. Once you connect to it, launch your browser
     and the web interface is self explanatory. (If the interface doesn't load, type in "192.168.4.1" into your browser and hit go).
 5.  Once the ESP is on your wifi network, you can then upload the required files for the web interface by typing the IP address
-    of the ESP followed by "/upload" (i.e. 192.168.1.20/upload).  Then upload the files from the folder labeled "upload these" from this         repo.
+    of the ESP followed by `/upload` (i.e. `192.168.1.20/upload`). Then upload the files from the folder labeled
+    `upload these to ESP8266` from this repo.
 6.  Once you have finished uploading, type in the IP of the ESP into your browser and you should be up and running!
+7.	You can edit the location string shown in the web ui by editing the file `location.txt` before you upload it.
+	Or edit the file afterwards by typing the IP address of the ESP followed by `/edit` (i.e. `192.168.1.20/edit`) using the integrated ESP Editor.
 
 ## Updating the firmware
 
-After the first flash, you can update the firmware via OTA by typing the IP address of the ESP followed by "/update" (i.e. 192.168.1.20/update). WIFI config and uploaded files will stay untouched.
+After the first flash, you can update the firmware via OTA by typing the IP address of the ESP followed by `/update` (i.e. `192.168.1.20/update`).
+WIFI config and uploaded files will stay untouched.
 
 ## License
 
@@ -83,7 +84,3 @@ As per the original [McLighting](https://github.com/toblum/McLighting) and [Jake
 
 	You should have received a copy of the GNU Lesser General Public License
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-## Palettes on SPIFFS
-
-Normally, you use [PaletteKnife](http://fastled.io/tools/paletteknife/) to generate arrays with the palette info.  You then compile this data into your project.  I wanted to be able to update the palettes without recompiling, so I moved them to files in SPIFFS (/palettes directory).  There is a little python program that basically takes the logic from PaletteKnife and outputs a binary file with the palette data instead.  Load these binary files to SPIFFS using the [Arduino ESP8266 filesystem uploader](https://github.com/esp8266/arduino-esp8266fs-plugin) or manually.

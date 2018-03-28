@@ -50,7 +50,6 @@
 // ***************************************************************************
 #include "definitions.h"
 #include "eepromsettings.h"
-#include "palettes.h"
 #include "colormodes.h"
 
 // ***************************************************************************
@@ -128,12 +127,6 @@ void setup() {
   ///*** Random Seed***
   randomSeed(analogRead(0));
 
-  //********color palette setup stuff****************
-  currentPalette = RainbowColors_p;
-  loadPaletteFromFile(settings.palette_ndx, &targetPalette);
-  currentBlending = LINEARBLEND;
-  //**************************************************
-
 #ifndef REMOTE_DEBUG
   DBG_OUTPUT_PORT.begin(115200);
 #endif
@@ -164,7 +157,6 @@ void setup() {
   // set master brightness control
   FastLED.setBrightness(settings.overall_brightness);
   
-
   // ***************************************************************************
   // Setup: WiFiManager
   // ***************************************************************************
@@ -182,7 +174,6 @@ void setup() {
   // if it does not connect it starts an access point with the specified name
   // here  "AutoConnectAP"
   // and goes into a blocking loop awaiting configuration
-
   
   if (!wifiManager.autoConnect(hostname)) {
     DBG_OUTPUT_PORT.println("failed to connect and hit timeout");
@@ -217,7 +208,6 @@ void setup() {
   ArduinoOTA.onEnd([]() { 
     DBG_OUTPUT_PORT.println("\nEnd... remounting SPIFFS");
     SPIFFS.begin();
-    paletteCount = getPaletteCount();
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     DBG_OUTPUT_PORT.printf("Progress: %u%%\r", (progress / (total / 100)));
@@ -249,7 +239,8 @@ void setup() {
   MDNS.begin(hostname);
   DBG_OUTPUT_PORT.print("Open http://");
   DBG_OUTPUT_PORT.print(hostname);
-  DBG_OUTPUT_PORT.println(".local/edit to see the file browser");
+  DBG_OUTPUT_PORT.println(".local/upload to upload files");
+  DBG_OUTPUT_PORT.println("Use /edit for file browser");
 
   // ***************************************************************************
   // Setup: WebSocket server
@@ -305,7 +296,7 @@ void setup() {
     json += ", \"gpio\":" +
             String((uint32_t)(((GPI | GPO) & 0xFFFF) | ((GP16I & 0x01) << 16)));
     json += "}";
-    server.send(200, "text/json", json);
+    server.send(200, "application/json", json);
     json = String();
   });
 
@@ -489,28 +480,11 @@ server.on("/fire", []() {
     getStatusJSON();
   });
   
-  server.on("/palette_anims", []() {    
-    settings.mode = PALETTE_ANIMS;
-    if (server.arg("p") != "") {
-      uint8_t pal = (uint8_t) strtol(server.arg("p").c_str(), NULL, 10);
-      if (pal > paletteCount) 
-        pal = paletteCount;
-             
-      settings.palette_ndx = pal;
-      loadPaletteFromFile(settings.palette_ndx, &targetPalette);
-      currentPalette = targetPalette; //PaletteCollection[settings.palette_ndx];
-      DBG_OUTPUT_PORT.printf("Palette is: %d", pal);
-    }
-    getStatusJSON();
-  });
-
   #ifdef HTTP_OTA
     httpUpdater.setup(&server,"/update");
   #endif
 
   server.begin();
-
-  paletteCount = getPaletteCount();
 }
 
 void loop() {
@@ -565,10 +539,6 @@ void loop() {
 
     case BPM:
       bpm();
-      break;
-
-    case PALETTE_ANIMS:
-      palette_anims();
       break;
 
     case RIPPLE:
@@ -653,7 +623,6 @@ void loop() {
     
   } while (millis() < continueTime);
 
-  
 }
 
 void nextPattern() {

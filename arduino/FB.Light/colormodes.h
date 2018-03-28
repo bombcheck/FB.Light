@@ -109,50 +109,6 @@ void juggle() {
   // insert a delay to keep the framerate modest
   // FastLED.delay(int(float(1000/settings.fps)));
 }
-//******************************************************************************************
-//                     PALETTE ANIMATION FUNCTIONS
-//******************************************************************************************
-int wipeInProgress = 0;
-
-void FillLEDsFromPaletteColors(CRGBPalette16 palette, uint8_t paletteStartIndex, uint16_t endingLEDIndex=0xFFFF) {
-  uint8_t colorIndex = paletteStartIndex;
-
-  for (int i = 0; i < NUM_LEDS; i++) {
-    if (i > endingLEDIndex) return;  //stop condition
-    
-    // leds[i] = ColorFromPalette( currentPalette, colorIndex + sin8(i*16),
-    // brightness);
-    leds[i] = ColorFromPalette(palette, colorIndex,
-                               settings.effect_brightness);
-    if (anim_direction == FORWARD) {
-      colorIndex += 3;
-    }
-    if (anim_direction == BACK) {
-      colorIndex -= 3;
-    }
-  }
-}
-
-void ChangePalettePeriodically(bool forceNow) {
-  if (forceNow || millis() - paletteMillis > (settings.show_length * 1000)) {
-    paletteMillis = millis();
-
-    targetPaletteIndex = random(0, paletteCount);
-
-    currentPalette = targetPalette;
-
-    anim_direction = (DIRECTION)!anim_direction; // DIRECTION enum allows flipping by boolean not.
-
-    loadPaletteFromFile(targetPaletteIndex, &targetPalette);
-
-    DBG_OUTPUT_PORT.printf("New pallet index: %d\n", targetPaletteIndex);
-
-    if (settings.glitter_wipe_on) {
-       DBG_OUTPUT_PORT.println("Begin glitter wipe");
-       wipeInProgress = true;
-    }
-  }
-}
 
 void colorWipe() {
   static CRGB prevColor = CHSV(gHue, 255, settings.effect_brightness);
@@ -175,73 +131,8 @@ void colorWipe() {
     leds[x] = prevColor;
   }
 
-  //Render the glitter at the intersection
-  if (settings.glitter_wipe_on) {
-    for (int x=0; x < 3; x++) {
-      int speckle = wipePos + random(-SPARKLE_SPREAD,SPARKLE_SPREAD);
-      if (speckle >= 0 && speckle < NUM_LEDS) {
-          leds[speckle] +=  CRGB(settings.glitter_color.red, settings.glitter_color.green,
-               settings.glitter_color.blue);
-      }    
-    }
-  }
-  
   // Advance for next frame
   wipePos+=WIPE_SPEED;
-}
-
-void palette_anims() {
-  currentBlending = LINEARBLEND;
-
-  if (settings.palette_ndx == -1) ChangePalettePeriodically(false);
-
-  if (!settings.glitter_wipe_on) {
-    uint8_t maxChanges = int(float(settings.fps / 2));
-    nblendPaletteTowardPalette(currentPalette, targetPalette, maxChanges);
-
-    // Update the current palette if necessary-- and send to any connected clients.
-    if (currentPaletteIndex != targetPaletteIndex) {
-      currentPaletteIndex = targetPaletteIndex;
-    
-      // Send current palette name to the UI.
-      String name = getPaletteNameWithIndex(currentPaletteIndex);
-      webSocket.broadcastTXT("p"+name);
-    }
-  }
-  
-  static uint8_t startIndex = 0;
-
-  /* motion speed */
-  startIndex = startIndex + 3;
-
-  FillLEDsFromPaletteColors(currentPalette,startIndex);
-
-  if (settings.glitter_wipe_on && wipeInProgress) {
-    if (wipePos >= NUM_LEDS) {
-      DBG_OUTPUT_PORT.println("End glitter wipe");
-      wipeInProgress = false;
-      wipePos = 0;
-      currentPalette = targetPalette;
-      currentPaletteIndex = targetPaletteIndex;
-
-      // Send current palette name to the UI.
-      String name = getPaletteNameWithIndex(currentPaletteIndex);
-      webSocket.broadcastTXT("p"+name);      
-      FillLEDsFromPaletteColors(targetPalette,startIndex);
-    } else {
-      FillLEDsFromPaletteColors(targetPalette,startIndex, wipePos);
-      for (int x=0; x < 3; x++) {
-        int speckle = wipePos + random(-SPARKLE_SPREAD,SPARKLE_SPREAD);
-        if (speckle >= 0 && speckle < NUM_LEDS) {
-            leds[speckle] +=  CRGB(settings.glitter_color.red, settings.glitter_color.green,
-                 settings.glitter_color.blue);
-        }  
-      }
-      wipePos+=WIPE_SPEED;
-    }
-  }
-
-  
 }
 
 //*****************LED RIPPLE*****************************************************
@@ -677,6 +568,6 @@ void fw_rainbow() {
 //*******************************ARRAY OF SHOW ANIMATIONS FOR MIXED SHOW
 //MODE***********************
 typedef void (*SimplePatternList[])();
-SimplePatternList gPatterns = {rainbow, confetti,      sinelon, juggle,
-                               bpm,     palette_anims, ripple,  comet};
+SimplePatternList gPatterns = {rainbow, confetti, sinelon, juggle,
+                               bpm, ripple, comet};
 //**************************************************************************************************
