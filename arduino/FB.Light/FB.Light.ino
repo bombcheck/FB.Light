@@ -21,7 +21,9 @@
 // ***************************************************************************
 // Load libraries for: WebServer / WiFiManager / WebSockets
 // ***************************************************************************
+#include <NTPClient.h>
 #include <ESP8266WiFi.h>  //https://github.com/esp8266/Arduino
+#include <WiFiUdp.h>
 
 // needed for library WiFiManager
 #include <DNSServer.h>
@@ -51,6 +53,7 @@
 #include "definitions.h"
 #include "eepromsettings.h"
 #include "colormodes.h"
+#include "clock.h"
 
 // ***************************************************************************
 // Instanciate HTTP(80) / WebSockets(81) Server
@@ -89,7 +92,7 @@ void configModeCallback(WiFiManager *myWiFiManager) {
   // Show USER that module can't connect to stored WiFi
   uint16_t i;
   for (i = 0; i < NUM_LEDS; i++) {
-    leds[i].setRGB(0, 0, 50);
+    leds(i).setRGB(0, 0, 50);
   }
   FastLED.show(); 
 }
@@ -149,14 +152,18 @@ void setup() {
   FastLED.setMaxRefreshRate(FASTLED_HZ);
 
   // tell FastLED about the LED strip configuration
-  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS)
+  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds[0], leds.Size())
       .setCorrection(TypicalLEDStrip);
   
   // FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds,
   // NUM_LEDS).setCorrection(TypicalLEDStrip);
   // set master brightness control
   FastLED.setBrightness(settings.overall_brightness);
-  
+
+  for (int i=0; i < CLOCK_DATA_PREFIX_COUNT; i++) ClockDataPrefix += " ";
+  ScrollingMsg.SetFont(MatriseFontData);
+  ScrollingMsg.Init(&leds, leds.Width(), leds.Height(), 0, 0);
+
   // ***************************************************************************
   // Setup: WiFiManager
   // ***************************************************************************
@@ -262,6 +269,12 @@ void setup() {
     }
     DBG_OUTPUT_PORT.printf("\n");
   }
+
+  // ***************************************************************************
+  // Setup: NTPclient
+  // ***************************************************************************
+
+  timeClient.begin();
 
   // ***************************************************************************
   // Setup: SPIFFS Webserver handler
@@ -485,6 +498,8 @@ server.on("/fire", []() {
   #endif
 
   server.begin();
+
+  clockAppearTimer = millis() + (settings.clock_timer * 1000);
 }
 
 void loop() {
@@ -496,11 +511,11 @@ void loop() {
   switch (settings.mode) {
     default:
     case OFF: 
-      fill_solid(leds, NUM_LEDS, CRGB(0,0,0));
+      fill_solid(leds[0], NUM_LEDS, CRGB(0,0,0));
       break;
       
     case ALL: 
-      fill_solid(leds, NUM_LEDS,  CRGB(settings.main_color.red, settings.main_color.green,
+      fill_solid(leds[0], NUM_LEDS,  CRGB(settings.main_color.red, settings.main_color.green,
                          settings.main_color.blue));
       break;
 
@@ -587,6 +602,27 @@ void loop() {
     addGlitter(settings.glitter_density);
   }
 
+  // Init clock
+  if (settings.show_clock == true) {
+    if (showClock == false) {
+      if (clockAppearTimer < millis()) {
+        initClock();    
+      }
+    }
+  }
+
+  // Handle clock if active
+  if (showClock == true) {
+    if (ScrollingMsg.UpdateText() == -1) {
+      if (settings.show_clock == false) {
+        clockAppearTimer = 0;
+      } else {
+        clockAppearTimer = millis() + (settings.clock_timer * 1000);  
+      }      
+      showClock = false;
+    }
+  }
+  
   // Get the current time
   unsigned long continueTime = millis() + int(float(1000 / settings.fps));  
   // Do our main loop functions, until we hit our wait time
@@ -623,6 +659,8 @@ void loop() {
     
   } while (millis() < continueTime);
 
+  //Update NTP-Time
+  timeClient.update();
 }
 
 void nextPattern() {

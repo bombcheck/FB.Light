@@ -38,6 +38,11 @@ typedef struct {
   LEDState glitter_color;  // Store the "glitter color" of the strip for glitter mode
   uint8_t effect_brightness = 80;  // Brightness used for effect animations
   uint8_t confetti_dens = 1;  // Density for the confetti effect.  More confetti needed for longer strings.
+  bool show_clock = false;  // Global to add / remove glitter to any animation
+  uint8_t clock_timer = 15;
+  uint8_t clock_brightness = 130;
+  uint8_t clock_speed = 3;
+  uint8_t clock_dim = 100;
   uint8_t filler[46];  // in case adding data in config avoiding loosing current conf by bad crc
   uint16_t crc;
 } EEPROMSettings;
@@ -69,6 +74,11 @@ void loadDefaults() {
   settings.main_color = { 128, 128, 128};  // Store the "main color" of the strip used in single color modes
   settings.glitter_color = {128, 128, 128};
   settings.confetti_dens = 1;
+  settings.show_clock = false;
+  settings.clock_timer = 15;
+  settings.clock_brightness = 130;
+  settings.clock_speed = 3;
+  settings.clock_dim = 100;
 }
 
 bool readSettings(bool clear_on_error) {
@@ -171,6 +181,8 @@ void printSettings() {
   DBG_OUTPUT_PORT.printf("glitter_color:      %d,%d,%d\n", settings.glitter_color.red,
                          settings.glitter_color.green, settings.glitter_color.blue);
   DBG_OUTPUT_PORT.printf("confetti_dens:      %d\n", settings.confetti_dens); // selected palette
+  DBG_OUTPUT_PORT.printf("show_clock:         %d\n",
+                         settings.show_clock);  // Global to add / remove glitter to any animation
 }
 
 void initSettings() {

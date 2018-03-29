@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.00.b7"
+#define FW_VERSION "00.09.00.b8"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
@@ -49,6 +49,15 @@
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
+// Stuff for clock (scrolling text)
+#include <LEDMatrix.h>
+#include <LEDText.h>
+#include <FontMatrise.h>
+#define CLOCK_DATA_PREFIX_COUNT 2
+#define TIME_SERVER "de.pool.ntp.org"
+#define NTP_UPDATE_INTERVAL 60000
+#define NTP_OFFSET 7200   // Offset in seconds from CET
+
 #define HOSTNAME_PREFIX "FB-Light"
 
 //#define REMOTE_DEBUG
@@ -59,9 +68,14 @@
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
 #define NUM_LEDS 88
+#define MATRIX_WIDTH   11
+#define MATRIX_HEIGHT  8
+#define MATRIX_TYPE    VERTICAL_MATRIX
 #define MAX_CURRENT 3000  // limit to max current
 #define FASTLED_HZ 400    // maximum FASTLED refresh rate ( default = 400)
-CRGB leds[NUM_LEDS];
+//CRGB leds[NUM_LEDS];
+cLEDMatrix<-MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE> leds;
+cLEDText ScrollingMsg;
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
