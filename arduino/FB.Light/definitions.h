@@ -56,7 +56,6 @@
 #define CLOCK_DATA_PREFIX_COUNT 2
 #define TIME_SERVER "de.pool.ntp.org"
 #define NTP_UPDATE_INTERVAL 60000
-#define NTP_OFFSET 7200   // Offset in seconds from CET
 
 #define HOSTNAME_PREFIX "FB-Light"
 

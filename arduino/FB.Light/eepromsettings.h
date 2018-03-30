@@ -43,6 +43,7 @@ typedef struct {
   uint8_t clock_brightness = 130;
   uint8_t clock_speed = 3;
   uint8_t clock_dim = 100;
+  int8_t clock_offset = 1;
   uint8_t filler[46];  // in case adding data in config avoiding loosing current conf by bad crc
   uint16_t crc;
 } EEPROMSettings;
@@ -79,6 +80,7 @@ void loadDefaults() {
   settings.clock_brightness = 130;
   settings.clock_speed = 3;
   settings.clock_dim = 100;
+  settings.clock_offset = 1;
 }
 
 bool readSettings(bool clear_on_error) {

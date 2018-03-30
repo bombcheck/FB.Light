@@ -22,10 +22,17 @@ uint32_t clockAppearTimer = 0;
 String ClockDataPrefix = "";
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP,TIME_SERVER,NTP_OFFSET,NTP_UPDATE_INTERVAL);
+NTPClient timeClient(ntpUDP,TIME_SERVER,0,NTP_UPDATE_INTERVAL);
 
 void initClock() {
-    String ClockData = ClockDataPrefix + timeClient.getFormattedTime();
+    unsigned long rawTime = timeClient.getEpochTime();
+    unsigned long hours = (rawTime % 86400L) / 3600;
+    hours = hours + settings.clock_offset;
+    String hoursStr = hours < 10 ? "0" + String(hours) : String(hours);
+    unsigned long minutes = (rawTime % 3600) / 60;
+    String minutesStr = minutes < 10 ? "0" + String(minutes) : String(minutes);
+    
+    String ClockData = ClockDataPrefix + hoursStr + ":" + minutesStr;
     static char ClockDataChar[CLOCK_DATA_PREFIX_COUNT + 6];
     ClockData.toCharArray(ClockDataChar,sizeof(ClockDataChar));
 
