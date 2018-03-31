@@ -3,7 +3,6 @@
 Using this while playing around with WS2812-LEDs. Mixed up doctormord's great work with Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock and build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
 
 ![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light/confetti_1_small.gif)
-![BPM-Mode](https://breakout.bernis-hideout.de/git/FB.Light/bpm_small.gif)
 ![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light/juggle_small.gif)
 ![Confetti-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/confetti_clock_small.gif)
 ![BPM-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/bpm_clock_small.gif)
