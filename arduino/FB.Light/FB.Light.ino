@@ -602,24 +602,12 @@ void loop() {
     addGlitter(settings.glitter_density);
   }
 
-  // Init clock
+  // Init clock if enabled and not currently running
   if (settings.show_clock == true) {
     if (showClock == false) {
       if (clockAppearTimer < millis()) {
         initClock();    
       }
-    }
-  }
-
-  // Handle clock if active
-  if (showClock == true) {
-    if (ScrollingMsg.UpdateText() == -1) {
-      if (settings.show_clock == false) {
-        clockAppearTimer = 0;
-      } else {
-        clockAppearTimer = millis() + (settings.clock_timer * 1000);  
-      }      
-      showClock = false;
     }
   }
   
@@ -629,6 +617,19 @@ void loop() {
   
   do {
     //long int now = micros();
+
+    // Handle clock if running
+    if (showClock == true) {
+      if (ScrollingMsg.UpdateText() == -1) {
+        if (settings.show_clock == false) {
+          clockAppearTimer = 0;
+        } else {
+          clockAppearTimer = millis() + (settings.clock_timer * 1000);  
+        }      
+        showClock = false;
+      }
+    }
+    
     FastLED.show();         // Display whats rendered.    
     //long int later = micros();
     //DBG_OUTPUT_PORT.printf("Show time is %ld\n", later-now);

@@ -18,7 +18,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bool showClock = false;
-uint32_t clockAppearTimer = 0;
+unsigned long clockAppearTimer = 0;
 String ClockDataPrefix = "";
 
 WiFiUDP ntpUDP;
