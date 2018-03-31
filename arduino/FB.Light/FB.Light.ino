@@ -160,9 +160,11 @@ void setup() {
   // set master brightness control
   FastLED.setBrightness(settings.overall_brightness);
 
+  // Initialize stuff for scrolling text (clock)
   for (int i=0; i < CLOCK_DATA_PREFIX_COUNT; i++) ClockDataPrefix += " ";
   ScrollingMsg.SetFont(MatriseFontData);
   ScrollingMsg.Init(&leds, leds.Width(), leds.Height(), 0, 0);
+  ScrollingMsg.SetScrollDirection(SCROLL_LEFT);
 
   // ***************************************************************************
   // Setup: WiFiManager

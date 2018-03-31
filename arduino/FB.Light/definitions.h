@@ -49,7 +49,7 @@
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-// Stuff for clock (scrolling text)
+// Stuff for scrolling text (clock)
 #include <LEDMatrix.h>
 #include <LEDText.h>
 #include <FontMatrise.h>

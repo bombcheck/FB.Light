@@ -1,10 +1,12 @@
 # FB.Light Responsive LED Control
 
-Using this while playing around with WS2812-LEDs. Build a nice RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
+Using this while playing around with WS2812-LEDs. Mixed up doctormord's great work with Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock and build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
 
 ![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light/confetti_1_small.gif)
 ![BPM-Mode](https://breakout.bernis-hideout.de/git/FB.Light/bpm_small.gif)
 ![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light/juggle_small.gif)
+![Confetti-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/confetti_clock_small.gif)
+![BPM-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/bpm_clock_small.gif)
 
 ## Used libraries / software
 
@@ -13,20 +15,26 @@ https://github.com/coryking/FastLED
 
 We are using this fork because it supports DMA which removes flicker issues. Enabled via `#define FASTLED_ESP8266_DMA`. You must use pin 3 for your LED stripe!
 
-McLighting library:
-https://github.com/toblum/McLighting
-
-Russel's implementation:
-https://github.com/russp81/LEDLAMP_FASTLEDs
-
-Jakes's "Grisworld" LED Controller
-https://github.com/jake-b/Griswold-LED-Controller
-
-jscolor Color Picker:
-http://jscolor.com/
-
 RemoteDebug:
 https://github.com/JoaoLopesF/RemoteDebug
+
+LEDMatrix by Aaron Liddiment (included in this repo: see libraries-folder!):
+https://github.com/AaronLiddiment/LEDMatrix
+
+LEDText by Aaron Liddiment (included in this repo: see libraries-folder!):
+https://github.com/AaronLiddiment/LEDText
+
+NTPClient
+https://github.com/arduino-libraries/NTPClient
+
+Original McLighting library:
+https://github.com/toblum/McLighting
+
+Russel's implementation of McLighting:
+https://github.com/russp81/LEDLAMP_FASTLEDs
+
+Jakes's "Grisworld" LED Controller:
+https://github.com/jake-b/Griswold-LED-Controller
 
 ## How to start
 
@@ -34,9 +42,9 @@ If you aren't familiar with how to setup your ESP8266, see the readme on McLight
 
 In short you will:
 
-1.  Configure the Arduino IDE to communicate with the ESP8266.
-2.  Upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled.   
-    (change the applicable options in `definitions.h` to your desire).
+1.  Configure the Arduino IDE to communicate with the ESP8266. Or export the bin file from the IDE and use your favourite flashing tool instead.
+2.  Upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled. Matrix is configured
+	as a vertical 11x8 (width x height) layout with the beginning at bottom right (change the applicable options in `definitions.h` to your desire).
 3.  Patch FastLED Library (not neccessary when using the library included in this repo!):
 
 ```arduino

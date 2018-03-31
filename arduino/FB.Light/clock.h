@@ -33,12 +33,11 @@ void initClock() {
     String minutesStr = minutes < 10 ? "0" + String(minutes) : String(minutes);
     
     String ClockData = ClockDataPrefix + hoursStr + ":" + minutesStr;
-    static char ClockDataChar[CLOCK_DATA_PREFIX_COUNT + 6];
+    static char ClockDataChar[CLOCK_DATA_PREFIX_COUNT + 10];
     ClockData.toCharArray(ClockDataChar,sizeof(ClockDataChar));
 
     ScrollingMsg.SetText((unsigned char *)ClockDataChar, sizeof(ClockDataChar) - 1);
     ScrollingMsg.SetFrameRate(settings.clock_speed);
-    ScrollingMsg.SetScrollDirection(SCROLL_LEFT);
     ScrollingMsg.SetBackgroundMode(BACKGND_DIMMING,settings.clock_dim);
     ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);
     showClock = true;
