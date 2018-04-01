@@ -25,9 +25,8 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP,TIME_SERVER,0,NTP_UPDATE_INTERVAL);
 
 void initClock() {
-    unsigned long rawTime = timeClient.getEpochTime();
+    unsigned long rawTime = timeClient.getEpochTime() + (settings.clock_offset * 3600);
     unsigned long hours = (rawTime % 86400L) / 3600;
-    hours = hours + settings.clock_offset;
     String hoursStr = hours < 10 ? "0" + String(hours) : String(hours);
     unsigned long minutes = (rawTime % 3600) / 60;
     String minutesStr = minutes < 10 ? "0" + String(minutes) : String(minutes);
