@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.01.b10"
+#define FW_VERSION "00.09.01.b11"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
@@ -55,7 +55,7 @@
 #include <FontMatrise.h>
 #define CLOCK_DATA_PREFIX_COUNT 2
 #define TIME_SERVER "de.pool.ntp.org"
-#define NTP_UPDATE_INTERVAL 60000
+#define NTP_UPDATE_INTERVAL 600000
 
 #define HOSTNAME_PREFIX "FB-Light"
 
