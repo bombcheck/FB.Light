@@ -36,10 +36,6 @@
 
 #include <Ticker.h>
 
-#ifdef REMOTE_DEBUG
-  #include "RemoteDebug.h" //https://github.com/JoaoLopesF/RemoteDebug
-#endif
-
 #include <WebSockets.h>  //https://github.com/Links2004/arduinoWebSockets
 #include <WebSocketsServer.h>
 
@@ -361,11 +357,47 @@ void setup() {
     getStatusJSON();
   });
 
+  server.on("/set_clock_brightness", []() {
+    if (server.arg("c").toInt() > 0) {
+      settings.clock_brightness = (int)server.arg("c").toInt() * 2.55;
+    } else {
+      settings.clock_brightness = server.arg("p").toInt();
+    }
+    if (settings.clock_brightness > 255) {
+      settings.clock_brightness = 255;
+    }
+    if (settings.clock_brightness < 0) {
+      settings.clock_brightness = 0;
+    }
+
+    getStatusJSON();
+  });
+
+  server.on("/set_clock", []() {
+    if (server.arg("s").toInt() ==  1) {
+      settings.show_clock = true;
+      clockAppearTimer = 0;
+    } 
+    else {
+      settings.show_clock = false;
+      clockAppearTimer = 0;
+    } 
+
+    getStatusJSON();
+  });
+
   server.on("/get_brightness", []() {
     String str_brightness = String((int)(settings.overall_brightness / 2.55));
     server.send(200, "text/plain", str_brightness);
     DBG_OUTPUT_PORT.print("/get_brightness: ");
     DBG_OUTPUT_PORT.println(str_brightness);
+  });
+
+  server.on("/get_clock_brightness", []() {
+    String str_clock_brightness = String((int)(settings.clock_brightness / 2.55));
+    server.send(200, "text/plain", str_clock_brightness);
+    DBG_OUTPUT_PORT.print("/get_clock_brightness: ");
+    DBG_OUTPUT_PORT.println(str_clock_brightness);
   });
 
   server.on("/get_switch", []() {
@@ -381,6 +413,21 @@ void setup() {
     server.send(200, "text/plain", rgbcolor);
     DBG_OUTPUT_PORT.print("/get_color: ");
     DBG_OUTPUT_PORT.println(rgbcolor);
+  });
+
+  server.on("/restore_defaults", []() {
+    loadDefaults();
+    getStatusJSON();
+  });
+
+  server.on("/save_settings", []() {
+    saveSettings();
+    server.send(200, "text/plain", "Current settings saved!");
+  });
+
+  server.on("/load_settings", []() {
+    readSettings(false);
+    getStatusJSON();
   });
 
   server.on("/status", []() { getStatusJSON(); });

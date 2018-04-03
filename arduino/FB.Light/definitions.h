@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.01.b11"
+#define FW_VERSION "00.09.01.b12"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
@@ -59,7 +59,7 @@
 
 #define HOSTNAME_PREFIX "FB-Light"
 
-//#define REMOTE_DEBUG
+#define REMOTE_DEBUG
 
 #define DATA_PIN 3
 //#define BUILTIN_LED 2
@@ -154,8 +154,10 @@ LEDState ledstates[NUM_LEDS]; // Get an array of led states to store the state o
 int16_t wipePos = 0;
 
 #ifdef REMOTE_DEBUG
+  #include "RemoteDebug.h" //https://github.com/JoaoLopesF/RemoteDebug
   RemoteDebug Debug;
   #define DBG_OUTPUT_PORT Debug
 #else
   #define DBG_OUTPUT_PORT Serial
 #endif
+
