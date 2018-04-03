@@ -39,11 +39,12 @@ typedef struct {
   uint8_t effect_brightness = 80;  // Brightness used for effect animations
   uint8_t confetti_dens = 1;  // Density for the confetti effect.  More confetti needed for longer strings.
   bool show_clock = false;  // Global to add / remove clock
-  uint16_t clock_timer = 15;  // How often should the clock appear?
-  uint8_t clock_brightness = 130; // Clock Brightness
-  uint8_t clock_speed = 25;        // Clock Speed
-  uint8_t clock_dim = 100;        // Brightness of background (effects) during clock-run
-  int8_t clock_offset = 1;        // Time-Offset for clock
+  uint16_t clock_timer = 15;        // How often should the clock appear?
+  uint8_t clock_brightness = 130;   // Clock Brightness
+  uint8_t clock_speed = 25;         // Clock Speed
+  uint8_t clock_dim = 100;          // Brightness of background (effects) during clock-run
+  int8_t clock_offset = 1;          // Time-Offset for clock
+  uint8_t clock_color = 0;          // Color of the clock
   uint8_t filler[46];  // in case adding data in config avoiding loosing current conf by bad crc
   uint16_t crc;
 } EEPROMSettings;
@@ -81,6 +82,7 @@ void loadDefaults() {
   settings.clock_speed = 25;
   settings.clock_dim = 100;
   settings.clock_offset = 1;
+  settings.clock_color = 0;
 }
 
 bool readSettings(bool clear_on_error) {

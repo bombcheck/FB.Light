@@ -117,7 +117,7 @@ void handleNotFound() {
 
 char* listStatusJSON() {
   static char json[512];
-  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d, \"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"clock_on\":%d, \"clock_timer\":%d, \"clock_brightness\":%d, \"clock_speed\":%d, \"clock_dim\":%d, \"clock_offset\":%d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, settings.show_clock, settings.clock_timer, settings.clock_brightness, settings.clock_speed, settings.clock_dim, settings.clock_offset, FW_VERSION);
+  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d, \"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"clock_on\":%d, \"clock_timer\":%d, \"clock_color\":%d, \"clock_brightness\":%d, \"clock_speed\":%d, \"clock_dim\":%d, \"clock_offset\":%d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, settings.show_clock, settings.clock_timer, settings.clock_color, settings.clock_brightness, settings.clock_speed, settings.clock_dim, settings.clock_offset, FW_VERSION);
   return json;
 }
 
@@ -193,8 +193,8 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
 
       // # ==> Set clock timer
       if (payload[0] == 'b') {
-        uint8_t b = (uint8_t) strtol((const char *) &payload[1], NULL, 10);
-        settings.clock_timer = ((b >> 0) & 0xFF);
+        uint16_t b = (uint16_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.clock_timer = b;
         DBG_OUTPUT_PORT.printf("WS: Set clock timer to: [%u]\n", settings.clock_timer);
         webSocket.sendTXT(num, "OK");
       }
@@ -211,7 +211,15 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
       if (payload[0] == 'm') {
         int8_t b = (int8_t) strtol((const char *) &payload[1], NULL, 10);
         settings.clock_offset = b;
-        DBG_OUTPUT_PORT.printf("WS: Set clock ntp background to: [%u]\n", settings.clock_offset);
+        DBG_OUTPUT_PORT.printf("WS: Set clock ntp offset to: [%u]\n", settings.clock_offset);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set clock color
+      if (payload[0] == 'x') {
+        int8_t b = (int8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.clock_color = b;
+        DBG_OUTPUT_PORT.printf("WS: Set clock color to: [%u]\n", settings.clock_color);
         webSocket.sendTXT(num, "OK");
       }
 

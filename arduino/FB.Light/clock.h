@@ -38,7 +38,14 @@ void initClock() {
     ScrollingMsg.SetText((unsigned char *)ClockDataChar, sizeof(ClockDataChar) - 1);
     ScrollingMsg.SetFrameRate(settings.clock_speed);
     ScrollingMsg.SetBackgroundMode(BACKGND_DIMMING,settings.clock_dim);
-    ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);
+    if (settings.clock_color == 0) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);        // White
+    else if (settings.clock_color == 1) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, 0, 0);                                                   // Red
+    else if (settings.clock_color == 2) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, 0);                           // Yellow
+    else if (settings.clock_color == 3) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, settings.clock_brightness, 0);                                                   // Green
+    else if (settings.clock_color == 4) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, settings.clock_brightness, settings.clock_brightness);                           // Aqua
+    else if (settings.clock_color == 5) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, 0, settings.clock_brightness);                                                   // Blue
+    else if (settings.clock_color == 6) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, 0, settings.clock_brightness);                           // Purple
+    else ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);                                  // White
     showClock = true;
 }
 
