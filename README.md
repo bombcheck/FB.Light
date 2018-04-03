@@ -1,10 +1,11 @@
 # FB.Light Responsive LED Control
 
-Using this while playing around with WS2812-LEDs. Build a nice RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
+Using this while playing around with WS2812-LEDs. Mixed up doctormord's great work with Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock and build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
 
 ![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light/confetti_1_small.gif)
-![BPM-Mode](https://breakout.bernis-hideout.de/git/FB.Light/bpm_small.gif)
 ![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light/juggle_small.gif)
+![Confetti-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/confetti_clock_small.gif)
+![BPM-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/bpm_clock_small.gif)
 
 ## Used libraries / software
 
@@ -13,20 +14,26 @@ https://github.com/coryking/FastLED
 
 We are using this fork because it supports DMA which removes flicker issues. Enabled via `#define FASTLED_ESP8266_DMA`. You must use pin 3 for your LED stripe!
 
-McLighting library:
+RemoteDebug (debug output is visible via a telnet session rather than printing to serial):
+https://github.com/JoaoLopesF/RemoteDebug
+
+LEDMatrix by Aaron Liddiment (included in this repo: see libraries-folder!):
+https://github.com/AaronLiddiment/LEDMatrix
+
+LEDText by Aaron Liddiment (included in this repo: see libraries-folder!):
+https://github.com/AaronLiddiment/LEDText
+
+NTPClient
+https://github.com/arduino-libraries/NTPClient
+
+Original McLighting library:
 https://github.com/toblum/McLighting
 
-Russel's implementation:
+Russel's implementation of McLighting:
 https://github.com/russp81/LEDLAMP_FASTLEDs
 
-Jakes's "Grisworld" LED Controller
+Jakes's "Grisworld" LED Controller:
 https://github.com/jake-b/Griswold-LED-Controller
-
-jscolor Color Picker:
-http://jscolor.com/
-
-RemoteDebug:
-https://github.com/JoaoLopesF/RemoteDebug
 
 ## How to start
 
@@ -34,9 +41,9 @@ If you aren't familiar with how to setup your ESP8266, see the readme on McLight
 
 In short you will:
 
-1.  Configure the Arduino IDE to communicate with the ESP8266.
-2.  Upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled.   
-    (change the applicable options in `definitions.h` to your desire).
+1.  Configure the Arduino IDE to communicate with the ESP8266. Or export the bin file from the IDE and use your favourite flashing tool instead.
+2.  Upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled. Matrix is configured
+	as a vertical 11x8 (width x height) layout with the beginning at bottom right (change the applicable options in `definitions.h` to your desire).
 3.  Patch FastLED Library (not neccessary when using the library included in this repo!):
 
 ```arduino
@@ -67,6 +74,49 @@ In short you will:
 
 After the first flash, you can update the firmware via OTA by typing the IP address of the ESP followed by `/update` (i.e. `192.168.1.20/update`).
 WIFI config and uploaded files will stay untouched.
+
+## API
+
+### Useful URLs:
+
+1. `/upload`: Upload files to SPIFFS-filesystem (used to upload/update web ui)
+1. `/update`: Upload new firmware here (web ui and settings will be kept). 
+1. `/edit`: Edit/upload files on the SPIFFS filesystem.
+1. `/graphs.htm`: Some statistic graphs of system ressources.
+1. `/restart`: Reboot the system (make sure to save changed settings before!).
+1. `/reset_wlan`: Delete the wifi settings (system will come up with the default WiFi configuration ap to connect to).
+
+### API-Endpoints:
+
+1. `/set_brightness`: Set overall brightness. Possible parameters: Brightness in percent `?c=(0-100)` or absolute brightness `?p=(0-255)`.
+1. `/set_clock_brightness`: Set brightness of the clock. Possible parameters: Brightness in percent `?c=(0-100)` or absolute brightness `?p=(0-255)`.
+1. `/set_clock`: Show clock. Possible parameters: Turn on `?s=1` (clock runs immediately) or turn off `?s=0`.
+1. `/get_brightness`: Returns the current overall brightness in percent.
+1. `/get_clock_brightness`: Returns the current brightness of the clock in percent.
+1. `/get_switch`: Returns `0` if current mode is `OFF`, otherwise `1`.
+1. `/get_color`: Returns the current main color in HEX.
+1. `/status`: Returns JSON of current settings.
+1. `/restore_defaults`: Restores default effect settings.
+1. `/load_settings`: Load effect settings from memory.
+1. `/save_settings`: Save current effect settings to memory.
+
+### Set Mode via API:
+
+1. `/off`: OFF
+1. `/rainbow`: RAINBOW
+1. `/confetti`: CONFETTI
+1. `/sinelon`: SINELON
+1. `/juggle`: JUGGLE
+1. `/bpm`: BPM
+1. `/ripple`: RIPPLE
+1. `/comet`: COMET
+1. `/wipe`: WIPE
+1. `/tv`: TV
+1. `/fire`: FIRE
+1. `/frainbow`: FIRE RAINBOW
+1. `/fworks`: FIREWORKS
+1. `/fwsingle`: FIREWORKS SINGLE
+1. `/fwrainbow`: FIREWORKS RAINBOW
 
 ## License
 
