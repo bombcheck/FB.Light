@@ -32,12 +32,13 @@ void initClock() {
     String minutesStr = minutes < 10 ? "0" + String(minutes) : String(minutes);
     
     String ClockData = ClockDataPrefix + hoursStr + ":" + minutesStr;
-    static char ClockDataChar[CLOCK_DATA_PREFIX_COUNT + 10];
+    static char ClockDataChar[CLOCK_DATA_PREFIX_COUNT + 6];
     ClockData.toCharArray(ClockDataChar,sizeof(ClockDataChar));
 
     ScrollingMsg.SetText((unsigned char *)ClockDataChar, sizeof(ClockDataChar) - 1);
     ScrollingMsg.SetFrameRate(settings.clock_speed);
     ScrollingMsg.SetBackgroundMode(BACKGND_DIMMING,settings.clock_dim);
+    
     if (settings.clock_color == 0) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);        // White
     else if (settings.clock_color == 1) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, 0, 0);                                                   // Red
     else if (settings.clock_color == 2) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, 0);                           // Yellow
@@ -45,7 +46,8 @@ void initClock() {
     else if (settings.clock_color == 4) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, settings.clock_brightness, settings.clock_brightness);                           // Aqua
     else if (settings.clock_color == 5) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, 0, settings.clock_brightness);                                                   // Blue
     else if (settings.clock_color == 6) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, 0, settings.clock_brightness);                           // Purple
-    else ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);                                  // White
+    else ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);                                  // White (default)
+    
     showClock = true;
 }
 

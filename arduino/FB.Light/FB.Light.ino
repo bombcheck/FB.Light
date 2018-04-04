@@ -141,7 +141,7 @@ void setup() {
   // ***************************************************************************
   delay(500);  // 500ms delay for recovery
 
-  // limit my draw to 2.1A at 5v of power draw
+  // limit my draw to 3A at 5v of power draw
   FastLED.setMaxPowerInVoltsAndMilliamps(5,MAX_CURRENT);
 
   // maximum refresh rate
@@ -652,29 +652,20 @@ void loop() {
   }
 
   // Init clock if enabled and not currently running
-  if (settings.show_clock == true) {
-    if (showClock == false) {
-      if (clockAppearTimer < millis()) {
-        initClock();    
-      }
-    }
+  if (settings.show_clock == true && showClock == false && clockAppearTimer <= millis()) {
+    initClock();    
   }
   
   // Get the current time
   unsigned long continueTime = millis() + int(float(1000 / settings.fps));  
   // Do our main loop functions, until we hit our wait time
-  
   do {
     //long int now = micros();
 
     // Handle clock if running
     if (showClock == true) {
       if (ScrollingMsg.UpdateText() == -1) {
-        if (settings.show_clock == false) {
-          clockAppearTimer = 0;
-        } else {
-          clockAppearTimer = millis() + (settings.clock_timer * 1000);  
-        }      
+        clockAppearTimer = millis() + (settings.clock_timer * 1000);  
         showClock = false;
       }
     }

@@ -26,20 +26,7 @@ https://github.com/AaronLiddiment/LEDText
 NTPClient
 https://github.com/arduino-libraries/NTPClient
 
-Original McLighting library:
-https://github.com/toblum/McLighting
-
-Russel's implementation of McLighting:
-https://github.com/russp81/LEDLAMP_FASTLEDs
-
-Jakes's "Grisworld" LED Controller:
-https://github.com/jake-b/Griswold-LED-Controller
-
 ## How to start
-
-If you aren't familiar with how to setup your ESP8266, see the readme on McLighting's git.  It's well written and should get you up and running.
-
-In short you will:
 
 1.  Configure the Arduino IDE to communicate with the ESP8266. Or export the bin file from the IDE and use your favourite flashing tool instead.
 2.  Upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled. Matrix is configured
