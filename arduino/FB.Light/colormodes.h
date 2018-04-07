@@ -217,6 +217,22 @@ void ripple() {
 //***************************END LED
 //RIPPLE*****************************************************
 
+// Simply fade all LEDs through all colors
+void colorflow() {
+  if (currentBg == nextBg) {
+    nextBg = random(256);
+  } else if (nextBg > currentBg) {
+    currentBg++;
+  } else {
+    currentBg--;
+  }
+  for (uint16_t l = 0; l < NUM_LEDS; l++) {
+    leds(l) = CHSV(currentBg, 255,
+                   settings.effect_brightness);  // strip.setPixelColor(l,
+                                                 // Wheel(currentBg, 0.1));
+  }
+}
+
 void comet() {
   fadeToBlackBy(leds[0], NUM_LEDS, settings.ftb_speed);
   lead_dot = beatsin16(int(float(settings.fps / 3)), 0, NUM_LEDS);

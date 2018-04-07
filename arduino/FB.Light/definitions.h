@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.01.b14"
+#define FW_VERSION "00.09.01.b15"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
@@ -96,7 +96,8 @@ enum MODE { HOLD,
     FIRE_RAINBOW,
     FIREWORKS,
     FIREWORKS_SINGLE,
-    FIREWORKS_RAINBOW,};
+    FIREWORKS_RAINBOW,
+    COLORFLOW,};
     
 enum DIRECTION {
   BACK = 0,
@@ -126,8 +127,8 @@ float fadeRate = 0.8;
 int diff;
 
 //background color
-uint32_t currentBg = random(256);
-uint32_t nextBg = currentBg;
+uint16_t currentBg = random(256);
+uint16_t nextBg = currentBg;
 //******************************************************************************
 
 byte dothue = 0;

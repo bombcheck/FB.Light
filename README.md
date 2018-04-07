@@ -104,6 +104,7 @@ WIFI config and uploaded files will stay untouched.
 1. `/fworks`: FIREWORKS
 1. `/fwsingle`: FIREWORKS SINGLE
 1. `/fwrainbow`: FIREWORKS RAINBOW
+1. `/colorflow`: COLORFLOW
 
 ## License
 

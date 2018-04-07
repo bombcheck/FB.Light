@@ -382,6 +382,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         if (str_mode.startsWith("=fwrainbow")) {
           settings.mode = FIREWORKS_RAINBOW;
         }                                                                                              
+        if (str_mode.startsWith("=colorflow")) {
+          settings.mode = COLORFLOW;
+        }   
         DBG_OUTPUT_PORT.printf("Activated mode [%u]!\n", settings.mode);
         webSocket.sendTXT(num, "OK");
       }

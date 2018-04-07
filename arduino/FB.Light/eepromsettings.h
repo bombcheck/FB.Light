@@ -197,6 +197,8 @@ void printSettings() {
                          settings.clock_dim);
   DBG_OUTPUT_PORT.printf("clock_offset:         %d\n",
                          settings.clock_offset);
+  DBG_OUTPUT_PORT.printf("clock_color:         %d\n",
+                         settings.clock_color);
 }
 
 void initSettings() {

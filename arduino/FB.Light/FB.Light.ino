@@ -542,6 +542,13 @@ server.on("/fire", []() {
     getStatusJSON();
   });
   
+  server.on("/colorflow", []() {
+    //exit_func = true;
+    settings.mode = COLORFLOW;
+    getArgs();
+    getStatusJSON();
+  });
+
   #ifdef HTTP_OTA
     httpUpdater.setup(&server,"/update");
   #endif
@@ -644,7 +651,11 @@ void loop() {
     case FIREWORKS_RAINBOW:
       fw_rainbow();
       break;
-  }
+
+    case COLORFLOW:
+      colorflow();
+      break;
+}
 
   // Add glitter if necessary
   if (settings.glitter_on == true) {
