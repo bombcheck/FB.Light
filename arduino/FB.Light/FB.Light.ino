@@ -21,7 +21,9 @@
 // ***************************************************************************
 // Load libraries for: WebServer / WiFiManager / WebSockets
 // ***************************************************************************
+#include <NTPClient.h>
 #include <ESP8266WiFi.h>  //https://github.com/esp8266/Arduino
+#include <WiFiUdp.h>
 
 // needed for library WiFiManager
 #include <DNSServer.h>
@@ -33,10 +35,6 @@
 #include <WiFiClient.h>
 
 #include <Ticker.h>
-
-#ifdef REMOTE_DEBUG
-  #include "RemoteDebug.h" //https://github.com/JoaoLopesF/RemoteDebug
-#endif
 
 #include <WebSockets.h>  //https://github.com/Links2004/arduinoWebSockets
 #include <WebSocketsServer.h>
@@ -51,6 +49,7 @@
 #include "definitions.h"
 #include "eepromsettings.h"
 #include "colormodes.h"
+#include "clock.h"
 
 // ***************************************************************************
 // Instanciate HTTP(80) / WebSockets(81) Server
@@ -89,7 +88,7 @@ void configModeCallback(WiFiManager *myWiFiManager) {
   // Show USER that module can't connect to stored WiFi
   uint16_t i;
   for (i = 0; i < NUM_LEDS; i++) {
-    leds[i].setRGB(0, 0, 50);
+    leds(i).setRGB(0, 0, 50);
   }
   FastLED.show(); 
 }
@@ -142,21 +141,27 @@ void setup() {
   // ***************************************************************************
   delay(500);  // 500ms delay for recovery
 
-  // limit my draw to 2.1A at 5v of power draw
+  // limit my draw to 3A at 5v of power draw
   FastLED.setMaxPowerInVoltsAndMilliamps(5,MAX_CURRENT);
 
   // maximum refresh rate
   FastLED.setMaxRefreshRate(FASTLED_HZ);
 
   // tell FastLED about the LED strip configuration
-  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS)
+  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds[0], leds.Size())
       .setCorrection(TypicalLEDStrip);
   
   // FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds,
   // NUM_LEDS).setCorrection(TypicalLEDStrip);
   // set master brightness control
   FastLED.setBrightness(settings.overall_brightness);
-  
+
+  // Initialize stuff for scrolling text (clock)
+  for (int i=0; i < CLOCK_DATA_PREFIX_COUNT; i++) ClockDataPrefix += " ";
+  ScrollingMsg.SetFont(MatriseFontData);
+  ScrollingMsg.Init(&leds, leds.Width(), leds.Height(), 0, 0);
+  ScrollingMsg.SetScrollDirection(SCROLL_LEFT);
+
   // ***************************************************************************
   // Setup: WiFiManager
   // ***************************************************************************
@@ -264,6 +269,12 @@ void setup() {
   }
 
   // ***************************************************************************
+  // Setup: NTPclient
+  // ***************************************************************************
+
+  timeClient.begin();
+
+  // ***************************************************************************
   // Setup: SPIFFS Webserver handler
   // ***************************************************************************
 
@@ -346,11 +357,47 @@ void setup() {
     getStatusJSON();
   });
 
+  server.on("/set_clock_brightness", []() {
+    if (server.arg("c").toInt() > 0) {
+      settings.clock_brightness = (int)server.arg("c").toInt() * 2.55;
+    } else {
+      settings.clock_brightness = server.arg("p").toInt();
+    }
+    if (settings.clock_brightness > 255) {
+      settings.clock_brightness = 255;
+    }
+    if (settings.clock_brightness < 0) {
+      settings.clock_brightness = 0;
+    }
+
+    getStatusJSON();
+  });
+
+  server.on("/set_clock", []() {
+    if (server.arg("s").toInt() ==  1) {
+      settings.show_clock = true;
+      clockAppearTimer = 0;
+    } 
+    else {
+      settings.show_clock = false;
+      clockAppearTimer = 0;
+    } 
+
+    getStatusJSON();
+  });
+
   server.on("/get_brightness", []() {
     String str_brightness = String((int)(settings.overall_brightness / 2.55));
     server.send(200, "text/plain", str_brightness);
     DBG_OUTPUT_PORT.print("/get_brightness: ");
     DBG_OUTPUT_PORT.println(str_brightness);
+  });
+
+  server.on("/get_clock_brightness", []() {
+    String str_clock_brightness = String((int)(settings.clock_brightness / 2.55));
+    server.send(200, "text/plain", str_clock_brightness);
+    DBG_OUTPUT_PORT.print("/get_clock_brightness: ");
+    DBG_OUTPUT_PORT.println(str_clock_brightness);
   });
 
   server.on("/get_switch", []() {
@@ -366,6 +413,21 @@ void setup() {
     server.send(200, "text/plain", rgbcolor);
     DBG_OUTPUT_PORT.print("/get_color: ");
     DBG_OUTPUT_PORT.println(rgbcolor);
+  });
+
+  server.on("/restore_defaults", []() {
+    loadDefaults();
+    getStatusJSON();
+  });
+
+  server.on("/save_settings", []() {
+    saveSettings();
+    server.send(200, "text/plain", "Current settings saved!");
+  });
+
+  server.on("/load_settings", []() {
+    readSettings(false);
+    getStatusJSON();
   });
 
   server.on("/status", []() { getStatusJSON(); });
@@ -480,11 +542,48 @@ server.on("/fire", []() {
     getStatusJSON();
   });
   
+  server.on("/colorflow", []() {
+    //exit_func = true;
+    settings.mode = COLORFLOW;
+    getArgs();
+    getStatusJSON();
+  });
+
+  server.on("/caleidoscope1", []() {
+    //exit_func = true;
+    settings.mode = CALEIDOSCOPE1;
+    getArgs();
+    getStatusJSON();
+  });
+
+  server.on("/caleidoscope2", []() {
+    //exit_func = true;
+    settings.mode = CALEIDOSCOPE2;
+    getArgs();
+    getStatusJSON();
+  });
+
+  server.on("/caleidoscope3", []() {
+    //exit_func = true;
+    settings.mode = CALEIDOSCOPE3;
+    getArgs();
+    getStatusJSON();
+  });
+
+  server.on("/caleidoscope4", []() {
+    //exit_func = true;
+    settings.mode = CALEIDOSCOPE4;
+    getArgs();
+    getStatusJSON();
+  });
+
   #ifdef HTTP_OTA
     httpUpdater.setup(&server,"/update");
   #endif
 
   server.begin();
+
+  clockAppearTimer = millis() + (settings.clock_timer * 1000);
 }
 
 void loop() {
@@ -496,11 +595,11 @@ void loop() {
   switch (settings.mode) {
     default:
     case OFF: 
-      fill_solid(leds, NUM_LEDS, CRGB(0,0,0));
+      fill_solid(leds[0], NUM_LEDS, CRGB(0,0,0));
       break;
       
     case ALL: 
-      fill_solid(leds, NUM_LEDS,  CRGB(settings.main_color.red, settings.main_color.green,
+      fill_solid(leds[0], NUM_LEDS,  CRGB(settings.main_color.red, settings.main_color.green,
                          settings.main_color.blue));
       break;
 
@@ -580,19 +679,52 @@ void loop() {
     case FIREWORKS_RAINBOW:
       fw_rainbow();
       break;
-  }
+
+    case COLORFLOW:
+      colorflow();
+      break;
+
+    case CALEIDOSCOPE1:
+      caleidoscope(1);
+      break;
+
+    case CALEIDOSCOPE2:
+      caleidoscope(2);
+      break;
+
+    case CALEIDOSCOPE3:
+      caleidoscope(3);
+      break;
+
+    case CALEIDOSCOPE4:
+      caleidoscope(4);
+      break;
+}
 
   // Add glitter if necessary
   if (settings.glitter_on == true) {
     addGlitter(settings.glitter_density);
   }
 
+  // Init clock if enabled and not currently running
+  if (settings.show_clock == true && showClock == false && clockAppearTimer <= millis()) {
+    initClock();    
+  }
+  
   // Get the current time
   unsigned long continueTime = millis() + int(float(1000 / settings.fps));  
   // Do our main loop functions, until we hit our wait time
-  
   do {
     //long int now = micros();
+
+    // Handle clock if running
+    if (showClock == true) {
+      if (ScrollingMsg.UpdateText() == -1) {
+        clockAppearTimer = millis() + (settings.clock_timer * 1000);  
+        showClock = false;
+      }
+    }
+    
     FastLED.show();         // Display whats rendered.    
     //long int later = micros();
     //DBG_OUTPUT_PORT.printf("Show time is %ld\n", later-now);
@@ -623,6 +755,8 @@ void loop() {
     
   } while (millis() < continueTime);
 
+  //Update NTP-Time
+  timeClient.update();
 }
 
 void nextPattern() {

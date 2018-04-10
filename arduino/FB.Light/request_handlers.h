@@ -116,8 +116,8 @@ void handleNotFound() {
 }
 
 char* listStatusJSON() {
-  char json[512];
-  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d,\"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, FW_VERSION);
+  static char json[512];
+  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d, \"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"clock_on\":%d, \"clock_timer\":%d, \"clock_color\":%d, \"clock_brightness\":%d, \"clock_speed\":%d, \"clock_dim\":%d, \"clock_offset\":%d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, settings.show_clock, settings.clock_timer, settings.clock_color, settings.clock_brightness, settings.clock_speed, settings.clock_dim, settings.clock_offset, FW_VERSION);
   return json;
 }
 
@@ -175,6 +175,54 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         webSocket.sendTXT(num, "OK");
       }
 
+      // # ==> Set clock brightness
+      if (payload[0] == 'c') {
+        uint8_t b = (uint8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.clock_brightness = ((b >> 0) & 0xFF);
+        DBG_OUTPUT_PORT.printf("WS: Set clock brightness to: [%u]\n", settings.clock_brightness);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set clock speed
+      if (payload[0] == 'v') {
+        uint8_t b = (uint8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.clock_speed = ((b >> 0) & 0xFF);
+        DBG_OUTPUT_PORT.printf("WS: Set clock speed to: [%u]\n", settings.clock_speed);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set clock timer
+      if (payload[0] == 'b') {
+        uint16_t b = (uint16_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.clock_timer = b;
+        DBG_OUTPUT_PORT.printf("WS: Set clock timer to: [%u]\n", settings.clock_timer);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set clock background dimming
+      if (payload[0] == 'n') {
+        uint8_t b = (uint8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.clock_dim = ((b >> 0) & 0xFF);
+        DBG_OUTPUT_PORT.printf("WS: Set clock background dimming to: [%u]\n", settings.clock_dim);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set clock ntp offset
+      if (payload[0] == 'm') {
+        int8_t b = (int8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.clock_offset = b;
+        DBG_OUTPUT_PORT.printf("WS: Set clock ntp offset to: [%u]\n", settings.clock_offset);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set clock color
+      if (payload[0] == 'x') {
+        int8_t b = (int8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.clock_color = b;
+        DBG_OUTPUT_PORT.printf("WS: Set clock color to: [%u]\n", settings.clock_color);
+        webSocket.sendTXT(num, "OK");
+      }
+
       // # ==> Set brightness
       if (payload[0] == '%') {
         uint8_t b = (uint8_t) strtol((const char *) &payload[1], NULL, 10);
@@ -227,7 +275,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         settings.main_color.blue = ((rgb >> 0) & 0xFF);
 
         for (int i = 0; i < NUM_LEDS; i++) {
-          leds[i] = CRGB(settings.main_color.red, settings.main_color.green, settings.main_color.blue);
+          leds(i) = CRGB(settings.main_color.red, settings.main_color.green, settings.main_color.blue);
         }
         FastLED.show();
         DBG_OUTPUT_PORT.printf("WS: Set all leds to main color: [%u] [%u] [%u]\n", settings.main_color.red, settings.main_color.green, settings.main_color.blue);
@@ -249,7 +297,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
           DBG_OUTPUT_PORT.printf("WS: Set single led [%u] to [%u] [%u] [%u]!\n", led, ledstates[led].red, ledstates[led].green, ledstates[led].blue);
 
           for (uint8_t i = 0; i < NUM_LEDS; i++) {
-            leds[i] = CRGB(ledstates[i].red, ledstates[i].green, ledstates[i].blue);
+            leds(i) = CRGB(ledstates[i].red, ledstates[i].green, ledstates[i].blue);
             
           }
           FastLED.show();
@@ -305,6 +353,14 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         if (str_mode.startsWith("=stop_glitter")) {
           settings.glitter_on = false;
         }                                                                                   
+        if (str_mode.startsWith("=show_clock")) {
+          settings.show_clock = true;
+          clockAppearTimer = 0;
+        }
+        if (str_mode.startsWith("=stop_clock")) {
+          settings.show_clock = false;
+          clockAppearTimer = 0;
+        }                                                                                   
         if (str_mode.startsWith("=wipe")) {
           settings.mode = WIPE;
         }                                                                                   
@@ -326,6 +382,21 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         if (str_mode.startsWith("=fwrainbow")) {
           settings.mode = FIREWORKS_RAINBOW;
         }                                                                                              
+        if (str_mode.startsWith("=colorflow")) {
+          settings.mode = COLORFLOW;
+        }   
+        if (str_mode.startsWith("=caleidoscope1")) {
+          settings.mode = CALEIDOSCOPE1;
+        }   
+        if (str_mode.startsWith("=caleidoscope2")) {
+          settings.mode = CALEIDOSCOPE2;
+        }   
+        if (str_mode.startsWith("=caleidoscope3")) {
+          settings.mode = CALEIDOSCOPE3;
+        }   
+        if (str_mode.startsWith("=caleidoscope4")) {
+          settings.mode = CALEIDOSCOPE4;
+        }   
         DBG_OUTPUT_PORT.printf("Activated mode [%u]!\n", settings.mode);
         webSocket.sendTXT(num, "OK");
       }

@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.00.b7"
+#define FW_VERSION "00.09.01.b16"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
@@ -32,36 +32,38 @@
 //#define FASTLED_ALLOW_INTERRUPTS 0
 #define FASTLED_INTERRUPT_RETRY_COUNT 3
 
-// Note, you need to patch FastLEDs in order to use this.  You'll get an
-// error related to <avr\pgmspace.h>. Saves more than 3k given the palettes
-//
-// Simply edit <fastled_progmem.h> and update the include (Line ~29):
-//      #if FASTLED_INCLUDE_PGMSPACE == 1
-//      #if (defined(__AVR__))
-//      #include <avr\pgmspace.h>
-//      #else
-//      #include <pgmspace.h>
-//      #endif
-//      #endif
-
 #include "FastLED.h"
 #if defined(FASTLED_VERSION) && (FASTLED_VERSION < 3001000)
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
+// Stuff for scrolling text (clock)
+#include <LEDMatrix.h>
+#include <LEDText.h>
+#include <FontMatrise.h>
+#define CLOCK_DATA_PREFIX_COUNT 2     // Prefix some spaces before the clock-text so it starts outside the visible area of your matrix.
+#define TIME_SERVER "de.pool.ntp.org"
+#define NTP_UPDATE_INTERVAL 900000
+
 #define HOSTNAME_PREFIX "FB-Light"
 
-//#define REMOTE_DEBUG
+#define REMOTE_DEBUG
 
-#define DATA_PIN 3
+#define DATA_PIN 3          // Fixed to 3 when using FASTLED_ESP8266_DMA!!
 //#define BUILTIN_LED 2
 //#define CLK_PIN   4
-#define LED_TYPE WS2812B
-#define COLOR_ORDER GRB
-#define NUM_LEDS 88
+#define LED_TYPE WS2812B    // Used LED-Type in your matrix
+#define COLOR_ORDER GRB     // Color-Order of your matrix
+#define NUM_LEDS 88         // Number of LEDs in your matrix
+#define MATRIX_WIDTH   11   // Physical width of your matrix
+#define MATRIX_HEIGHT  8    // Physical height of your matrix  
+#define MATRIX_TYPE    VERTICAL_MATRIX   // Type of your Matrix: VERTICAL_ZIGZAG_MATRIX, VERTICAL_MATRIX, HORIZONTAL_ZIGZAG_MATRIX, HORIZONTAL_MATRIX
 #define MAX_CURRENT 3000  // limit to max current
 #define FASTLED_HZ 400    // maximum FASTLED refresh rate ( default = 400)
-CRGB leds[NUM_LEDS];
+//CRGB leds[NUM_LEDS];
+cLEDMatrix<-MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE> leds;   // Default starting point: Bottom-Left. Invert (-) MATRIX_WIDTH and/or MATRIX_HEIGHT to match your physical matrix layout
+cLEDMatrix<-MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE> buffer; // Default starting point: Bottom-Left. Invert (-) MATRIX_WIDTH and/or MATRIX_HEIGHT to match your physical matrix layout
+cLEDText ScrollingMsg;
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
@@ -83,7 +85,12 @@ enum MODE { HOLD,
     FIRE_RAINBOW,
     FIREWORKS,
     FIREWORKS_SINGLE,
-    FIREWORKS_RAINBOW,};
+    FIREWORKS_RAINBOW,
+    COLORFLOW,
+    CALEIDOSCOPE1,
+    CALEIDOSCOPE2,
+    CALEIDOSCOPE3,
+    CALEIDOSCOPE4,};
     
 enum DIRECTION {
   BACK = 0,
@@ -103,6 +110,7 @@ long paletteMillis = 0; // Global variable for timechecking color palette shifts
 //bool GLITTER_ON = false;        // Global to add / remove glitter to any animation
 
 //***************************************************************************
+byte calcount;
 
 //***************RIPPLE******************************************************
 int color;
@@ -113,8 +121,8 @@ float fadeRate = 0.8;
 int diff;
 
 //background color
-uint32_t currentBg = random(256);
-uint32_t nextBg = currentBg;
+uint16_t currentBg = random(256);
+uint16_t nextBg = currentBg;
 //******************************************************************************
 
 byte dothue = 0;
@@ -141,8 +149,10 @@ LEDState ledstates[NUM_LEDS]; // Get an array of led states to store the state o
 int16_t wipePos = 0;
 
 #ifdef REMOTE_DEBUG
+  #include "RemoteDebug.h" //https://github.com/JoaoLopesF/RemoteDebug
   RemoteDebug Debug;
   #define DBG_OUTPUT_PORT Debug
 #else
   #define DBG_OUTPUT_PORT Serial
 #endif
+
