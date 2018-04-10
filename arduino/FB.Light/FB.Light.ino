@@ -549,6 +549,34 @@ server.on("/fire", []() {
     getStatusJSON();
   });
 
+  server.on("/caleidoscope1", []() {
+    //exit_func = true;
+    settings.mode = CALEIDOSCOPE1;
+    getArgs();
+    getStatusJSON();
+  });
+
+  server.on("/caleidoscope2", []() {
+    //exit_func = true;
+    settings.mode = CALEIDOSCOPE2;
+    getArgs();
+    getStatusJSON();
+  });
+
+  server.on("/caleidoscope3", []() {
+    //exit_func = true;
+    settings.mode = CALEIDOSCOPE3;
+    getArgs();
+    getStatusJSON();
+  });
+
+  server.on("/caleidoscope4", []() {
+    //exit_func = true;
+    settings.mode = CALEIDOSCOPE4;
+    getArgs();
+    getStatusJSON();
+  });
+
   #ifdef HTTP_OTA
     httpUpdater.setup(&server,"/update");
   #endif
@@ -654,6 +682,22 @@ void loop() {
 
     case COLORFLOW:
       colorflow();
+      break;
+
+    case CALEIDOSCOPE1:
+      caleidoscope(1);
+      break;
+
+    case CALEIDOSCOPE2:
+      caleidoscope(2);
+      break;
+
+    case CALEIDOSCOPE3:
+      caleidoscope(3);
+      break;
+
+    case CALEIDOSCOPE4:
+      caleidoscope(4);
       break;
 }
 

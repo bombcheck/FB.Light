@@ -580,6 +580,165 @@ void fw_rainbow() {
 
 // END
 
+//*******************CALEIDOSCOPE**************************************
+
+int XY(int x, int y) {
+  if(y > MATRIX_HEIGHT) { y = MATRIX_HEIGHT; }
+  if(y < 0) { y = 0; }
+  if(x > MATRIX_WIDTH) { x = MATRIX_WIDTH;}
+  if(x < 0) { x = 0; }
+  if(x % 2 == 1) {  
+  return (x * (MATRIX_WIDTH) + (MATRIX_HEIGHT - y -1));
+  } else {
+    // use that line only, if you have all rows beginning at the same side
+    return (x * (MATRIX_WIDTH) + y);  
+  }
+}
+ 
+// scale the brightness of the screenbuffer down
+void DimmAll(byte value)  
+{
+  for(int i = 0; i < NUM_LEDS; i++)
+  {
+    leds(i).nscale8(value);
+  }
+}
+ 
+/*
+Caleidoscope1 mirrors from source to A, B and C
+ 
+y
+ 
+|       |
+|   B   |   C
+|_______________
+|       |
+|source |   A
+|_______________ x
+ 
+*/
+void Caleidoscope1() {
+  for(int x = 0; x < MATRIX_WIDTH / 2 ; x++) {
+    for(int y = 0; y < MATRIX_HEIGHT / 2; y++) {
+      leds(XY( MATRIX_WIDTH - 1 - x, y )) = leds(XY( x, y ));              // copy to A
+      leds(XY( x, MATRIX_HEIGHT - 1 - y )) = leds(XY( x, y ));             // copy to B
+      leds(XY( MATRIX_WIDTH - 1 - x, MATRIX_HEIGHT - 1 - y )) = leds(XY( x, y )); // copy to C
+     
+    }
+  }
+}
+ 
+/*
+Caleidoscope2 rotates from source to A, B and C
+ 
+y
+ 
+|       |
+|   C   |   B
+|_______________
+|       |
+|source |   A
+|_______________ x
+ 
+*/
+void Caleidoscope2() {
+  for(int x = 0; x < MATRIX_WIDTH / 2 ; x++) {
+    for(int y = 0; y < MATRIX_HEIGHT / 2; y++) {
+      leds(XY( MATRIX_WIDTH - 1 - x, y )) = leds(XY( y, x ));    // rotate to A
+      leds(XY( MATRIX_WIDTH - 1 - x, MATRIX_HEIGHT - 1 - y )) = leds(XY( x, y ));    // rotate to B
+      leds(XY( x, MATRIX_HEIGHT - 1 - y )) = leds(XY( y, x ));    // rotate to C
+     
+     
+    }
+  }
+}
+ 
+// adds the color of one quarter to the other 3
+void Caleidoscope3() {
+  for(int x = 0; x < MATRIX_WIDTH / 2 ; x++) {
+    for(int y = 0; y < MATRIX_HEIGHT / 2; y++) {
+      leds(XY( MATRIX_WIDTH - 1 - x, y )) += leds(XY( y, x ));    // rotate to A
+      leds(XY( MATRIX_WIDTH - 1 - x, MATRIX_HEIGHT - 1 - y )) += leds(XY( x, y ));    // rotate to B
+      leds(XY( x, MATRIX_HEIGHT - 1 - y )) += leds(XY( y, x ));    // rotate to C
+     
+     
+    }
+  }
+}
+ 
+// add the complete buffer 3 times while rotating
+void Caleidoscope4() {
+  for(int x = 0; x < MATRIX_WIDTH ; x++) {
+    for(int y = 0; y < MATRIX_HEIGHT ; y++) {
+      buffer(XY( MATRIX_WIDTH - 1 - x, y )) += buffer(XY( y, x ));    // rotate to A
+      buffer(XY( MATRIX_WIDTH - 1 - x, MATRIX_HEIGHT - 1 - y )) += buffer(XY( x, y ));    // rotate to B
+      buffer(XY( x, MATRIX_HEIGHT - 1 - y )) += buffer(XY( y, x ));    // rotate to C
+     
+     
+    }
+  }
+}
+ 
+void ShowBuffer() {
+  for(int i = 0; i < NUM_LEDS ; i++) {
+    leds(i) += buffer(i);
+  }
+}
+ 
+void ClearBuffer() {
+  for(int i = 0; i < NUM_LEDS ; i++) {
+    buffer(i) = 0;
+  }
+}
+ 
+void Spiral(int x,int y, int r, byte dimm) {  
+  for(int d = r; d >= 0; d--) {                // from the outside to the inside
+    for(int i = x-d; i <= x+d; i++) {
+       leds(XY(i,y-d)) += leds(XY(i+1,y-d));   // lowest row to the right
+       leds(XY(i,y-d)).nscale8( dimm );}
+    for(int i = y-d; i <= y+d; i++) {
+       leds(XY(x+d,i)) += leds(XY(x+d,i+1));   // right colum up
+       leds(XY(x+d,i)).nscale8( dimm );}
+    for(int i = x+d; i >= x-d; i--) {
+       leds(XY(i,y+d)) += leds(XY(i-1,y+d));   // upper row to the left
+       leds(XY(i,y+d)).nscale8( dimm );}
+    for(int i = y+d; i >= y-d; i--) {
+       leds(XY(x-d,i)) += leds(XY(x-d,i-1));   // left colum down
+       leds(XY(x-d,i)).nscale8( dimm );}
+  }
+}
+
+void caleidoscope(uint8_t calmode)
+{
+  calcount=calcount+5;
+   
+  // first plant the seed into the buffer
+  buffer(XY(sin8(calcount)/17, cos8(calcount)/17)) = CHSV (160 , 255, 255); // the circle  
+  buffer(XY(quadwave8(calcount)/17, 4)) = CHSV (0 , 255, 255); // lines following different wave fonctions
+  buffer(XY(cubicwave8(calcount)/17, 6)) = CHSV (40 , 255, 255);
+  buffer(XY(triwave8(calcount)/17, 8)) = CHSV (80 , 255, 255);
+ 
+  // duplicate the seed in the buffer
+  if (calmode == 1) Caleidoscope1();
+  else if (calmode == 2) Caleidoscope2();
+  else if (calmode == 3) Caleidoscope3();
+  else if (calmode == 4) Caleidoscope4();
+  else Caleidoscope4();
+ 
+  // add buffer to leds
+  ShowBuffer();
+ 
+  // clear buffer
+  ClearBuffer();
+ 
+  // rotate leds
+  Spiral(7,7,8,110);
+ 
+  // do not delete the current leds, just fade them down for the tail effect
+  //DimmAll(220);
+}
+
+//*******************END CALEIDOSCOPE**********************************
 
 //*******************************ARRAY OF SHOW ANIMATIONS FOR MIXED SHOW
 //MODE***********************

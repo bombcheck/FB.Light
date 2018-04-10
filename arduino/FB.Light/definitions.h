@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.01.b15"
+#define FW_VERSION "00.09.01.b16"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
@@ -31,18 +31,6 @@
 #define FASTLED_ESP8266_DMA
 //#define FASTLED_ALLOW_INTERRUPTS 0
 #define FASTLED_INTERRUPT_RETRY_COUNT 3
-
-// Note, you need to patch FastLEDs in order to use this.  You'll get an
-// error related to <avr\pgmspace.h>. Saves more than 3k given the palettes
-//
-// Simply edit <fastled_progmem.h> and update the include (Line ~29):
-//      #if FASTLED_INCLUDE_PGMSPACE == 1
-//      #if (defined(__AVR__))
-//      #include <avr\pgmspace.h>
-//      #else
-//      #include <pgmspace.h>
-//      #endif
-//      #endif
 
 #include "FastLED.h"
 #if defined(FASTLED_VERSION) && (FASTLED_VERSION < 3001000)
@@ -74,6 +62,7 @@
 #define FASTLED_HZ 400    // maximum FASTLED refresh rate ( default = 400)
 //CRGB leds[NUM_LEDS];
 cLEDMatrix<-MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE> leds;   // Default starting point: Bottom-Left. Invert (-) MATRIX_WIDTH and/or MATRIX_HEIGHT to match your physical matrix layout
+cLEDMatrix<-MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE> buffer; // Default starting point: Bottom-Left. Invert (-) MATRIX_WIDTH and/or MATRIX_HEIGHT to match your physical matrix layout
 cLEDText ScrollingMsg;
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
@@ -97,7 +86,11 @@ enum MODE { HOLD,
     FIREWORKS,
     FIREWORKS_SINGLE,
     FIREWORKS_RAINBOW,
-    COLORFLOW,};
+    COLORFLOW,
+    CALEIDOSCOPE1,
+    CALEIDOSCOPE2,
+    CALEIDOSCOPE3,
+    CALEIDOSCOPE4,};
     
 enum DIRECTION {
   BACK = 0,
@@ -117,6 +110,7 @@ long paletteMillis = 0; // Global variable for timechecking color palette shifts
 //bool GLITTER_ON = false;        // Global to add / remove glitter to any animation
 
 //***************************************************************************
+byte calcount;
 
 //***************RIPPLE******************************************************
 int color;

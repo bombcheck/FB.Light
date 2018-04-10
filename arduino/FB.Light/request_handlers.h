@@ -385,6 +385,18 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         if (str_mode.startsWith("=colorflow")) {
           settings.mode = COLORFLOW;
         }   
+        if (str_mode.startsWith("=caleidoscope1")) {
+          settings.mode = CALEIDOSCOPE1;
+        }   
+        if (str_mode.startsWith("=caleidoscope2")) {
+          settings.mode = CALEIDOSCOPE2;
+        }   
+        if (str_mode.startsWith("=caleidoscope3")) {
+          settings.mode = CALEIDOSCOPE3;
+        }   
+        if (str_mode.startsWith("=caleidoscope4")) {
+          settings.mode = CALEIDOSCOPE4;
+        }   
         DBG_OUTPUT_PORT.printf("Activated mode [%u]!\n", settings.mode);
         webSocket.sendTXT(num, "OK");
       }

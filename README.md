@@ -1,11 +1,23 @@
-# FB.Light Responsive LED Control
+# FB.Light WS2812B WiFi-LED-Strip-Controller
 
-Using this while playing around with WS2812-LEDs. Mixed up doctormord's great work with Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock and build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
+Based upon doctormord's great mixture, this software is intended to act as a full-featured WiFi-LED-Strip-Controller for WS2812B-LEDs. I added some new effects to doctormord's work and integrated Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock. As a prove of concept I finally build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
 
 ![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light/confetti_1_small.gif)
 ![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light/juggle_small.gif)
 ![Confetti-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/confetti_clock_small.gif)
 ![BPM-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/bpm_clock_small.gif)
+
+## Features
+
+* Runs on an ESP8266 (I used a NodeMCU-board with an ESP-12E).
+* Easy integration into your existing WiFi network.
+* Responsive user interface which can be used with any desktop or mobile web browser.
+* Static color can be selected with a decent, delay-free colorwheel.
+* Many different effect-modes which can be tweaked and customized. They look great on both strips and matrices.
+* Customizable, scrolling, NTP-driven clock (only useful on a matrix). Can be combined with the other effects.
+* API to integrate the controller in existing home automation environments.
+* Firmware upgradeable via web interface.
+* Debug-Output can be viewed via telnet session.
 
 ## Used libraries / software
 
@@ -28,39 +40,23 @@ https://github.com/arduino-libraries/NTPClient
 
 ## How to start
 
-1.  Configure the Arduino IDE to communicate with the ESP8266. Or export the bin file from the IDE and use your favourite flashing tool instead.
-2.  Upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled. Matrix is configured
+1.	Wire your LEDs to your controller: In order to use the highly prefered DMA-Mode, you must use GPIO3 (RX on a NodeMCU) as the DATA_PIN!
+2.	Copy libraries from the `libraries`-folder in this repo to your arduino libraries-folder and make sure your have the other needed libraries added via your Arduino IDE as well.
+3.  Configure the Arduino IDE to communicate with the ESP8266. Or export the bin file from the IDE and use your favourite flashing tool instead.
+4.  Compile and upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled. Matrix is configured
 	as a vertical 11x8 (width x height) layout with the beginning at bottom right (change the applicable options in `definitions.h` to your desire).
-3.  Patch FastLED Library (not neccessary when using the library included in this repo!):
-
-```arduino
-// Note, you need to patch FastLEDs in order to use this.  You'll get an
-// error related to <avr\pgmspace.h>. Saves more than 3k given the palettes
-//
-// Simply edit <fastled_progmem.h> and update the include (Line ~29):
-
-#if FASTLED_INCLUDE_PGMSPACE == 1
-#if (defined(__AVR__))
-#include <avr\pgmspace.h>
-#else
-#include <pgmspace.h>
-#endif
-#endif
-```
-
-4.  On first launch, the ESP8266 will advertise it's own WiFi network for you to connect to. Once you connect to it, launch your browser
+5.  On first launch, the ESP8266 will advertise it's own WiFi network for you to connect to. Once you connect to it, launch your browser
     and the web interface is self explanatory. (If the interface doesn't load, type in "192.168.4.1" into your browser and hit go).
-5.  Once the ESP is on your wifi network, you can then upload the required files for the web interface by typing the IP address
-    of the ESP followed by `/upload` (i.e. `192.168.1.20/upload`). Then upload the files from the folder labeled
-    `upload these to ESP8266` from this repo.
-6.  Once you have finished uploading, type in the IP of the ESP into your browser and you should be up and running!
-7.	You can edit the location string shown in the web ui by editing the file `location.txt` before you upload it.
-	Or edit the file afterwards by typing the IP address of the ESP followed by `/edit` (i.e. `192.168.1.20/edit`) using the integrated ESP Editor.
+6.  Once the ESP is on your wifi network, you can then upload the required files for the web interface by typing the IP address
+    of the ESP followed by `/upload` (i.e. `192.168.1.20/upload`). Then upload the files from the folder labeled `upload these to ESP8266` from this repo.
+7.  Once you have finished uploading, type in the IP of the ESP into your browser and you should be up and running!
+8.	You can edit the location string shown in the web ui by editing the file `location.txt` before you upload it. Or edit the file afterwards by typing the IP address of the ESP
+    followed by `/edit` (i.e. `192.168.1.20/edit`) using the integrated ESP Editor (should be used with Google Chrome).
 
 ## Updating the firmware
 
 After the first flash, you can update the firmware via OTA by typing the IP address of the ESP followed by `/update` (i.e. `192.168.1.20/update`).
-WIFI config and uploaded files will stay untouched.
+WiFi config, settings and uploaded files will stay untouched.
 
 ## API
 
@@ -105,6 +101,10 @@ WIFI config and uploaded files will stay untouched.
 1. `/fwsingle`: FIREWORKS SINGLE
 1. `/fwrainbow`: FIREWORKS RAINBOW
 1. `/colorflow`: COLORFLOW
+1. `/caleidoscope1`: CALEIDOSCOPE 1
+1. `/caleidoscope2`: CALEIDOSCOPE 2
+1. `/caleidoscope3`: CALEIDOSCOPE 3
+1. `/caleidoscope4`: CALEIDOSCOPE 4
 
 ## License
 
