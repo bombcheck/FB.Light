@@ -1,6 +1,6 @@
 # FB.Light WS2812B WiFi-LED-Strip-Controller
 
-Based upon doctormord's great mixture, this software is intended to act as a full-featured WiFi-LED-Strip-Controller for WS2812B-LEDs. I added some new effects to doctormord's work and integrated Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock. As a prove of concept I finally build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
+Based upon [doctormord's](https://github.com/doctormord/Responsive_LED_Control) great mixture, this software is intended to act as a full-featured WiFi-LED-Strip-Controller for WS2812B-LEDs. I added some new effects to doctormord's work and integrated Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock. As a prove of concept I finally build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
 
 ![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light/confetti_1_small.gif)
 ![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light/juggle_small.gif)
@@ -108,7 +108,7 @@ WiFi config, settings and uploaded files will stay untouched.
 
 ## License
 
-As per the original [McLighting](https://github.com/toblum/McLighting) and [Jake's "Grisworld"](https://github.com/jake-b/Griswold-LED-Controller) project, this project is released under the GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007.
+This project is released under the GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007.
 
 	Griswold is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as 
