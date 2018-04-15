@@ -148,11 +148,14 @@ void setup() {
   FastLED.setMaxRefreshRate(FASTLED_HZ);
 
   // tell FastLED about the LED strip configuration
-  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds[0], leds.Size())
+  #ifdef CLK_PIN
+    FastLED.addLeds<LED_TYPE, DATA_PIN, CLK_PIN, COLOR_ORDER>(leds[0], leds.Size())
       .setCorrection(TypicalLEDStrip);
-  
-  // FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds,
-  // NUM_LEDS).setCorrection(TypicalLEDStrip);
+  #else
+    FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds[0], leds.Size())
+      .setCorrection(TypicalLEDStrip);
+  #endif
+
   // set master brightness control
   FastLED.setBrightness(settings.overall_brightness);
 
