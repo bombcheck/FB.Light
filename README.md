@@ -22,22 +22,12 @@ Based upon [doctormord's](https://github.com/doctormord/Responsive_LED_Control) 
 
 ## Used libraries / software
 
-Fork of FastLED 3.1.3 library (included in this repo: see libraries-folder!):
-https://github.com/coryking/FastLED
-
+* [Fork of FastLED 3.1.3 library](https://github.com/coryking/FastLED) (included in this repo: see libraries-folder!).
 We are using this fork because it supports DMA which removes flicker issues. Enabled via `#define FASTLED_ESP8266_DMA`. You must use pin 3 for your LED stripe!
-
-RemoteDebug (debug output is visible via a telnet session rather than printing to serial):
-https://github.com/JoaoLopesF/RemoteDebug
-
-LEDMatrix by Aaron Liddiment (included in this repo: see libraries-folder!):
-https://github.com/AaronLiddiment/LEDMatrix
-
-LEDText by Aaron Liddiment (included in this repo: see libraries-folder!):
-https://github.com/AaronLiddiment/LEDText
-
-NTPClient
-https://github.com/arduino-libraries/NTPClient
+* [RemoteDebug](https://github.com/JoaoLopesF/RemoteDebug): Debug output is visible via a telnet session rather than printing to serial):
+* [LEDMatrix by Aaron Liddiment](https://github.com/AaronLiddiment/LEDMatrix) (included in this repo: see libraries-folder!).
+* [LEDText by Aaron Liddiment](https://github.com/AaronLiddiment/LEDText) (included in this repo: see libraries-folder!).
+* [NTPClient](https://github.com/arduino-libraries/NTPClient)
 
 ## How to start
 
