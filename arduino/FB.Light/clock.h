@@ -23,7 +23,7 @@ bool TextLoaded = false;
 unsigned long clockAppearTimer = 0;
 String ClockDataPrefix = "";
 char ClockDataChar[CLOCK_DATA_PREFIX_COUNT + 6];
-char TextDataChar[256];
+char TextDataChar[266];
 uint8_t TextColor = 0;
 String TextMsg = "";
 

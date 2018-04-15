@@ -408,7 +408,7 @@ void setup() {
       }
       else {
         TextLoaded = true;
-        server.send(200, "text/plain", "Loaded scrolling text '" + TextMsg + "' with color " + TextColor + ".");
+        server.send(200, "text/plain", "OK: Loaded scrolling text '" + TextMsg + "' with color " + TextColor + ".");
       }
    } 
   });
