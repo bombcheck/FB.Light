@@ -386,6 +386,30 @@ void setup() {
     getStatusJSON();
   });
 
+  server.on("/show_text", []() {
+    if (server.arg("text") ==  "" || server.arg("color") ==  "") {
+    server.send(200, "text/plain", "Error: Paramter 'text' or 'color' is missing!");
+    } 
+    else {
+      TextColor = server.arg("color").toInt();
+      if (TextColor > 6) {
+        TextColor = 6;
+      }
+      if (TextColor < 0) {
+        TextColor = 0;
+      }
+      
+      TextMsg = server.arg("text");
+      if (TextMsg.length() > 255) {
+        server.send(200, "text/plain", "Error: Text can not have more than 255 characters!"); 
+      }
+      else {
+        TextLoaded = true;
+        server.send(200, "text/plain", "Loaded scrolling text '" + TextMsg + "' with color " + TextColor + ".");
+      }
+   } 
+  });
+
   server.on("/get_brightness", []() {
     String str_brightness = String((int)(settings.overall_brightness / 2.55));
     server.send(200, "text/plain", str_brightness);
@@ -664,7 +688,7 @@ void loop() {
       fire2012();
       break;
 
-      case FIRE_RAINBOW:
+    case FIRE_RAINBOW:
       fire_rainbow();
       break;
 
@@ -707,8 +731,13 @@ void loop() {
   }
 
   // Init clock if enabled and not currently running
-  if (settings.show_clock == true && showClock == false && clockAppearTimer <= millis()) {
+  if (settings.show_clock == true && showClock == false && showText == false && TextLoaded == false && clockAppearTimer <= millis()) {
     initClock();    
+  }
+
+  // Init loaded text if clock is not running
+  if (TextLoaded == true && showClock == false) {
+    initText(TextMsg, TextColor);
   }
   
   // Get the current time
@@ -717,14 +746,19 @@ void loop() {
   do {
     //long int now = micros();
 
-    // Handle clock if running
-    if (showClock == true) {
+    // Handle clock or text if neccessary
+    if (showClock == true || showText == true) {
       if (ScrollingMsg.UpdateText() == -1) {
-        clockAppearTimer = millis() + (settings.clock_timer * 1000);  
-        showClock = false;
+        if (showClock == true) {
+          clockAppearTimer = millis() + (settings.clock_timer * 1000);
+          showClock = false;
+        }
+        if (showText == true) {
+          showText = false;
+        }
       }
     }
-    
+
     FastLED.show();         // Display whats rendered.    
     //long int later = micros();
     //DBG_OUTPUT_PORT.printf("Show time is %ld\n", later-now);

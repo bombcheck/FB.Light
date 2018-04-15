@@ -18,11 +18,31 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bool showClock = false;
+bool showText = false;
+bool TextLoaded = false;
 unsigned long clockAppearTimer = 0;
 String ClockDataPrefix = "";
+char ClockDataChar[CLOCK_DATA_PREFIX_COUNT + 6];
+char TextDataChar[256];
+uint8_t TextColor = 0;
+String TextMsg = "";
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP,TIME_SERVER,0,NTP_UPDATE_INTERVAL);
+
+void setTextParams(uint8_t color) {
+    ScrollingMsg.SetFrameRate(settings.clock_speed);
+    ScrollingMsg.SetBackgroundMode(BACKGND_DIMMING,settings.clock_dim);
+    
+    if (color == 0) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);        // White
+    else if (color == 1) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, 0, 0);                                                   // Red
+    else if (color == 2) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, 0);                           // Yellow
+    else if (color == 3) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, settings.clock_brightness, 0);                                                   // Green
+    else if (color == 4) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, settings.clock_brightness, settings.clock_brightness);                           // Aqua
+    else if (color == 5) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, 0, settings.clock_brightness);                                                   // Blue
+    else if (color == 6) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, 0, settings.clock_brightness);                           // Purple
+    else ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);                   // White (default)  
+}
 
 void initClock() {
     unsigned long rawTime = timeClient.getEpochTime() + (settings.clock_offset * 3600);
@@ -32,22 +52,20 @@ void initClock() {
     String minutesStr = minutes < 10 ? "0" + String(minutes) : String(minutes);
     
     String ClockData = ClockDataPrefix + hoursStr + ":" + minutesStr;
-    static char ClockDataChar[CLOCK_DATA_PREFIX_COUNT + 6];
     ClockData.toCharArray(ClockDataChar,sizeof(ClockDataChar));
 
     ScrollingMsg.SetText((unsigned char *)ClockDataChar, sizeof(ClockDataChar) - 1);
-    ScrollingMsg.SetFrameRate(settings.clock_speed);
-    ScrollingMsg.SetBackgroundMode(BACKGND_DIMMING,settings.clock_dim);
-    
-    if (settings.clock_color == 0) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);        // White
-    else if (settings.clock_color == 1) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, 0, 0);                                                   // Red
-    else if (settings.clock_color == 2) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, 0);                           // Yellow
-    else if (settings.clock_color == 3) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, settings.clock_brightness, 0);                                                   // Green
-    else if (settings.clock_color == 4) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, settings.clock_brightness, settings.clock_brightness);                           // Aqua
-    else if (settings.clock_color == 5) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, 0, 0, settings.clock_brightness);                                                   // Blue
-    else if (settings.clock_color == 6) ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, 0, settings.clock_brightness);                           // Purple
-    else ScrollingMsg.SetTextColrOptions(COLR_RGB | COLR_SINGLE, settings.clock_brightness, settings.clock_brightness, settings.clock_brightness);                                  // White (default)
-    
+    setTextParams(settings.clock_color);    
     showClock = true;
+}
+
+void initText(String Text, uint8_t color) {
+    String TextWithPre = ClockDataPrefix + Text;
+    TextWithPre.toCharArray(TextDataChar,TextWithPre.length() + 1);
+
+    ScrollingMsg.SetText((unsigned char *)TextDataChar, TextWithPre.length());
+    setTextParams(color);
+    TextLoaded = false;
+    showText = true;
 }
 
