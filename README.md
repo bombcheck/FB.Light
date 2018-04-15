@@ -11,6 +11,7 @@ Based upon [doctormord's](https://github.com/doctormord/Responsive_LED_Control) 
 
 * Runs on an ESP8266 (I used a NodeMCU-board with an ESP-12E).
 * Easy integration into your existing WiFi network.
+* Max. power consumption can be defined (`#define MAX_CURRENT`): Protects your power supply by cutting brightness if current draw exceeds configured value.
 * Responsive user interface which can be used with any desktop or mobile web browser.
 * Static color can be selected with a decent, delay-free colorwheel.
 * Many different effect-modes which can be tweaked and customized. They look great on both strips and matrices.
