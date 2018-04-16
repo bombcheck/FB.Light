@@ -22,9 +22,11 @@
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
 #define FW_VERSION "00.09.01.b18"
+#define HOSTNAME_PREFIX "FB-Light"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
+#define REMOTE_DEBUG    // Debug via Telnet-Session instead of serial
 
 #define FASTLED_USE_PROGMEM 1
 #define FASTLED_ESP8266_RAW_PIN_ORDER
@@ -37,7 +39,7 @@
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-// Stuff for scrolling text
+// Stuff for scrolling text / clock
 #include <LEDMatrix.h>
 #include <LEDText.h>
 #include <FontMatrise.h>
@@ -45,24 +47,10 @@
 #define TIME_SERVER "de.pool.ntp.org"
 #define NTP_UPDATE_INTERVAL 900000
 
-#define HOSTNAME_PREFIX "FB-Light"
+// Definitions for hardware (LED-Type, Number if LEDs, Layout and so on) are now in a seperate include
+#include "hardware.h"
 
-#define REMOTE_DEBUG
-
-#define DATA_PIN 3          // Fixed to 3 when using FASTLED_ESP8266_DMA!!
-//#define BUILTIN_LED 2
-//#define CLK_PIN   4
-#define LED_TYPE WS2812B    // Used LED-Type in your matrix
-#define COLOR_ORDER GRB     // Color-Order of your matrix
-#define NUM_LEDS 88         // Number of LEDs in your matrix
-#define MATRIX_WIDTH   11   // Physical width of your matrix
-#define MATRIX_HEIGHT  8    // Physical height of your matrix  
-#define MATRIX_TYPE    VERTICAL_MATRIX   // Type of your Matrix: VERTICAL_ZIGZAG_MATRIX, VERTICAL_MATRIX, HORIZONTAL_ZIGZAG_MATRIX, HORIZONTAL_MATRIX
-#define MAX_CURRENT 3000  // limit to max current
 #define FASTLED_HZ 400    // maximum FASTLED refresh rate ( default = 400)
-//CRGB leds[NUM_LEDS];
-cLEDMatrix<-MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE> leds;   // Default starting point: Bottom-Left. Invert (-) MATRIX_WIDTH and/or MATRIX_HEIGHT to match your physical matrix layout
-cLEDMatrix<-MATRIX_WIDTH, MATRIX_HEIGHT, MATRIX_TYPE> buffer; // Default starting point: Bottom-Left. Invert (-) MATRIX_WIDTH and/or MATRIX_HEIGHT to match your physical matrix layout
 cLEDText ScrollingMsg;
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
