@@ -15,8 +15,8 @@ Based upon [doctormord's](https://github.com/doctormord/Responsive_LED_Control) 
 * Responsive user interface which can be used with any desktop or mobile web browser.
 * Static color can be selected with a decent, delay-free colorwheel.
 * Many different effect-modes which can be tweaked and customized. They look great on both strips and matrices.
-* Customizable, scrolling, NTP-driven clock (only useful on a matrix with a minimum height of 7 pixel). Can be combined with the other effects.
-* Run custom scrolling text via API (only useful on a matrix with a minimum height of 7 pixel). Can be combined with the other effects.
+* Customizable scrolling NTP-driven clock (only useful on a matrix with a minimum height of 7 pixel). Can be combined with the other effects.
+* Customizable scrolling text (only useful on a matrix with a minimum height of 7 pixel). Can be combined with the other effects.
 * API to integrate the controller in existing home automation environments.
 * Firmware upgradeable via web interface.
 * Debug-Output can be viewed via telnet session.
@@ -63,10 +63,11 @@ WiFi config, settings and uploaded files will stay untouched.
 
 ### API-Endpoints:
 
-1. `/show_text`: Set a custom scrolling text and display it once. Will not interfere with clock (and vice versa). Parameters: `text=(Max. 255 chars of text)` and `color=(0-6)`
 1. `/set_brightness`: Set overall brightness. Possible parameters: Brightness in percent `c=(0-100)` or absolute brightness `p=(0-255)`.
 1. `/set_clock_brightness`: Set brightness of the clock. Possible parameters: Brightness in percent `c=(0-100)` or absolute brightness `p=(0-255)`.
 1. `/set_clock`: Show clock. Possible parameters: Turn on `s=1` (clock runs immediately) or turn off `s=0`.
+1. `/set_text`: Show text. Possible parameters: Turn on `s=1` (text runs immediately) or turn off `s=0`.
+1. `/update_text`: Updates custom scrolling text and display it once. Parameters: `text=(Max. 255 chars of text)` and (optional) `color=(0-6)`.
 1. `/get_brightness`: Returns the current overall brightness in percent.
 1. `/get_clock_brightness`: Returns the current brightness of the clock in percent.
 1. `/get_switch`: Returns `0` if current mode is `OFF`, otherwise `1`.

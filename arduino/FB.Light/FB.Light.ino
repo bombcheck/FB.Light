@@ -126,9 +126,9 @@ void setup() {
   ///*** Random Seed***
   randomSeed(analogRead(0));
 
-#ifndef REMOTE_DEBUG
-  DBG_OUTPUT_PORT.begin(115200);
-#endif
+  #ifndef REMOTE_DEBUG
+    DBG_OUTPUT_PORT.begin(115200);
+  #endif
   DBG_OUTPUT_PORT.printf("system_get_cpu_freq: %d\n", system_get_cpu_freq());
 
   // set builtin led pin as output
@@ -159,8 +159,8 @@ void setup() {
   // set master brightness control
   FastLED.setBrightness(settings.overall_brightness);
 
-  // Initialize stuff for scrolling text (clock)
-  for (int i=0; i < CLOCK_DATA_PREFIX_COUNT; i++) ClockDataPrefix += " ";
+  // Initialize stuff for scrolling text
+  for (int i=0; i < TEXT_DATA_PREFIX_COUNT; i++) TextDataPrefix += " ";
   ScrollingMsg.SetFont(MatriseFontData);
   ScrollingMsg.Init(&leds, leds.Width(), leds.Height(), 0, 0);
   ScrollingMsg.SetScrollDirection(SCROLL_LEFT);
@@ -389,26 +389,43 @@ void setup() {
     getStatusJSON();
   });
 
-  server.on("/show_text", []() {
-    if (server.arg("text") ==  "" || server.arg("color") ==  "") {
-    server.send(200, "text/plain", "Error: Paramter 'text' or 'color' is missing!");
+  server.on("/set_text", []() {
+    if (server.arg("s").toInt() ==  1) {
+      settings.show_text = true;
+      textAppearTimer = 0;
     } 
     else {
-      TextColor = server.arg("color").toInt();
-      if (TextColor > 6) {
-        TextColor = 6;
-      }
-      if (TextColor < 0) {
-        TextColor = 0;
+      settings.show_text = false;
+      textAppearTimer = 0;
+    } 
+
+    getStatusJSON();
+  });
+
+  server.on("/update_text", []() {
+    if (server.arg("text") ==  "") {
+    server.send(200, "text/plain", "Error: Paramter 'text' is missing!");
+    } 
+    else {
+      if (server.arg("color") !=  "") {
+        settings.text_color = server.arg("color").toInt();
+        if (settings.text_color > 6) {
+          settings.text_color = 6;
+        }
+        if (settings.text_color < 0) {
+          settings.text_color = 0;
+        }
       }
       
-      TextMsg = server.arg("text");
-      if (TextMsg.length() > 255) {
+      if (server.arg("text").length() > 255) {
         server.send(200, "text/plain", "Error: Text can not have more than 255 characters!"); 
       }
       else {
-        TextLoaded = true;
-        server.send(200, "text/plain", "OK: Loaded scrolling text '" + TextMsg + "' with color " + TextColor + ".");
+        server.arg("text").toCharArray(settings.text_msg,server.arg("text").length() + 1);
+        settings.text_length = server.arg("text").length();
+        textAppearTimer = 0;
+        if (settings.show_text == false) TextLoaded = true;
+        server.send(200, "text/plain", "OK: Loaded scrolling text '" + server.arg("text") + "' with color " + settings.text_color + ".");
       }
    } 
   });
@@ -611,6 +628,7 @@ server.on("/fire", []() {
   server.begin();
 
   clockAppearTimer = millis() + (settings.clock_timer * 1000);
+  textAppearTimer = millis() + (settings.text_timer * 1000);
 }
 
 void loop() {
@@ -735,12 +753,16 @@ void loop() {
 
   // Init clock if enabled and not currently running
   if (settings.show_clock == true && showClock == false && showText == false && TextLoaded == false && clockAppearTimer <= millis()) {
-    initClock();    
+    initClock();
   }
 
-  // Init loaded text if clock is not running
-  if (TextLoaded == true && showClock == false) {
-    initText(TextMsg, TextColor);
+  if (settings.show_text == true && showClock == false && showText == false && TextLoaded == false && textAppearTimer <= millis()) {
+    initText();
+  }
+
+  // Init loaded text if clock is not running (preview)
+  if (TextLoaded == true && showClock == false && showText == false) {
+    initText();
   }
   
   // Get the current time
@@ -757,6 +779,7 @@ void loop() {
           showClock = false;
         }
         if (showText == true) {
+          textAppearTimer = millis() + (settings.text_timer * 1000);
           showText = false;
         }
       }

@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.01.b17"
+#define FW_VERSION "00.09.01.b18"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
 //#define ENABLE_OTA    // If defined, enable Arduino OTA code.
@@ -37,11 +37,11 @@
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
-// Stuff for scrolling text (clock)
+// Stuff for scrolling text
 #include <LEDMatrix.h>
 #include <LEDText.h>
 #include <FontMatrise.h>
-#define CLOCK_DATA_PREFIX_COUNT 2     // Prefix some spaces before the clock-text so it starts outside the visible area of your matrix.
+#define TEXT_DATA_PREFIX_COUNT 2     // Prefix some spaces before the text so it starts outside the visible area of your matrix.
 #define TIME_SERVER "de.pool.ntp.org"
 #define NTP_UPDATE_INTERVAL 900000
 
