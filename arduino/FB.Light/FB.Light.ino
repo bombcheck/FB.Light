@@ -49,7 +49,7 @@
 #include "definitions.h"
 #include "eepromsettings.h"
 #include "colormodes.h"
-#include "clock.h"
+#include "scrollingtext.h"
 
 // ***************************************************************************
 // Instanciate HTTP(80) / WebSockets(81) Server

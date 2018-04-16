@@ -36,7 +36,7 @@ We are using this fork because it supports DMA which removes flicker issues. Ena
 2.	Copy libraries from the `libraries`-folder in this repo to your arduino libraries-folder and make sure your have the other needed libraries added via your Arduino IDE as well.
 3.  Configure the Arduino IDE to communicate with the ESP8266. Or export the bin file from the IDE and use your favourite flashing tool instead.
 4.  Compile and upload the sketch (from this repo). The sketch is setup for a 88 pixel WS2812B GRB LED Strip on pin 3 with DMA enabled. Matrix is configured
-	as a vertical 11x8 (width x height) layout with the beginning at bottom right (change the applicable options in `definitions.h` to your desire).
+	as a vertical 11x8 (width x height) layout with the beginning at bottom right (change the applicable options in `hardware.h` to your desire).
 5.  On first launch, the ESP8266 will advertise it's own WiFi network for you to connect to. Once you connect to it, launch your browser
     and the web interface is self explanatory. (If the interface doesn't load, type in "192.168.4.1" into your browser and hit go).
 6.  Once the ESP is on your wifi network, you can then upload the required files for the web interface by typing the IP address
