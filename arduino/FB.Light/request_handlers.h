@@ -116,8 +116,8 @@ void handleNotFound() {
 }
 
 char* listStatusJSON() {
-  static char json[512];
-  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d, \"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"clock_on\":%d, \"clock_timer\":%d, \"clock_color\":%d, \"clock_brightness\":%d, \"clock_speed\":%d, \"clock_dim\":%d, \"clock_offset\":%d, \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, settings.show_clock, settings.clock_timer, settings.clock_color, settings.clock_brightness, settings.clock_speed, settings.clock_dim, settings.clock_offset, FW_VERSION);
+  static char json[770];
+  snprintf_P(json, sizeof(json), PSTR("{\"mode\":%d, \"FPS\":%d, \"show_length\":%d, \"ftb_speed\":%d, \"overall_brightness\":%d, \"effect_brightness\":%d, \"color\":[%d, %d, %d], \"glitter_color\":[%d,%d,%d], \"glitter_density\":%d, \"glitter_on\":%d, \"confetti_density\":%d, \"clock_on\":%d, \"clock_timer\":%d, \"clock_color\":%d, \"clock_brightness\":%d, \"clock_speed\":%d, \"clock_dim\":%d, \"clock_offset\":%d, \"text_on\":%d, \"text_color\":%d, \"text_speed\":%d, \"text_dim\":%d, \"text_brightness\":%d, \"text_timer\":%d, \"text_msg\": \"%s\", \"fw_version\": \"%s\"}"), settings.mode, settings.fps, settings.show_length, settings.ftb_speed, settings.overall_brightness, settings.effect_brightness, settings.main_color.red, settings.main_color.green, settings.main_color.blue, settings.glitter_color.red, settings.glitter_color.green, settings.glitter_color.blue, settings.glitter_density, settings.glitter_on, settings.confetti_dens, settings.show_clock, settings.clock_timer, settings.clock_color, settings.clock_brightness, settings.clock_speed, settings.clock_dim, settings.clock_offset, settings.show_text, settings.text_color, settings.text_speed, settings.text_dim, settings.text_brightness, settings.text_timer, settings.text_msg, FW_VERSION);
   return json;
 }
 
@@ -220,6 +220,46 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         int8_t b = (int8_t) strtol((const char *) &payload[1], NULL, 10);
         settings.clock_color = b;
         DBG_OUTPUT_PORT.printf("WS: Set clock color to: [%u]\n", settings.clock_color);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set text brightness
+      if (payload[0] == 's') {
+        uint8_t b = (uint8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.text_brightness = ((b >> 0) & 0xFF);
+        DBG_OUTPUT_PORT.printf("WS: Set text brightness to: [%u]\n", settings.text_brightness);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set text speed
+      if (payload[0] == 'd') {
+        uint8_t b = (uint8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.text_speed = ((b >> 0) & 0xFF);
+        DBG_OUTPUT_PORT.printf("WS: Set text speed to: [%u]\n", settings.text_speed);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set text timer
+      if (payload[0] == 'a') {
+        uint16_t b = (uint16_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.text_timer = b;
+        DBG_OUTPUT_PORT.printf("WS: Set text timer to: [%u]\n", settings.text_timer);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set text background dimming
+      if (payload[0] == 'f') {
+        uint8_t b = (uint8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.text_dim = ((b >> 0) & 0xFF);
+        DBG_OUTPUT_PORT.printf("WS: Set text background dimming to: [%u]\n", settings.text_dim);
+        webSocket.sendTXT(num, "OK");
+      }
+
+      // # ==> Set text color
+      if (payload[0] == 't') {
+        int8_t b = (int8_t) strtol((const char *) &payload[1], NULL, 10);
+        settings.text_color = b;
+        DBG_OUTPUT_PORT.printf("WS: Set text color to: [%u]\n", settings.text_color);
         webSocket.sendTXT(num, "OK");
       }
 
@@ -352,7 +392,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         }
         if (str_mode.startsWith("=stop_glitter")) {
           settings.glitter_on = false;
-        }                                                                                   
+        }
         if (str_mode.startsWith("=show_clock")) {
           settings.show_clock = true;
           clockAppearTimer = 0;
@@ -360,7 +400,15 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         if (str_mode.startsWith("=stop_clock")) {
           settings.show_clock = false;
           clockAppearTimer = 0;
-        }                                                                                   
+        }
+        if (str_mode.startsWith("=show_text")) {
+          settings.show_text = true;
+          textAppearTimer = 0;
+        }
+        if (str_mode.startsWith("=stop_text")) {
+          settings.show_text = false;
+          textAppearTimer = 0;
+        }
         if (str_mode.startsWith("=wipe")) {
           settings.mode = WIPE;
         }                                                                                   

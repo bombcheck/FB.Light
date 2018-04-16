@@ -1,6 +1,6 @@
 # FB.Light WS2812B WiFi-LED-Strip-Controller
 
-Based upon doctormord's great mixture, this software is intended to act as a full-featured WiFi-LED-Strip-Controller for WS2812B-LEDs. I added some new effects to doctormord's work and integrated Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock. As a prove of concept I finally build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
+Based upon [doctormord's](https://github.com/doctormord/Responsive_LED_Control) great mixture, this software is intended to act as a full-featured WiFi-LED-Strip-Controller for WS2812B-LEDs. I added some new effects to doctormord's work and integrated Aaron Liddiment's Matrix and Text-Libs to implement a nice, NTP-driven clock. As a prove of concept I finally build a decent RGB-LED-Lamp (milk glass / 11x8 LEDs) with it:
 
 ![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light/confetti_1_small.gif)
 ![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light/juggle_small.gif)
@@ -11,32 +11,24 @@ Based upon doctormord's great mixture, this software is intended to act as a ful
 
 * Runs on an ESP8266 (I used a NodeMCU-board with an ESP-12E).
 * Easy integration into your existing WiFi network.
+* Max. power consumption can be defined (`#define MAX_CURRENT`): Protects your power supply by cutting brightness if current draw exceeds configured value.
 * Responsive user interface which can be used with any desktop or mobile web browser.
 * Static color can be selected with a decent, delay-free colorwheel.
 * Many different effect-modes which can be tweaked and customized. They look great on both strips and matrices.
-* Customizable, scrolling, NTP-driven clock (only useful on a matrix). Can be combined with the other effects.
+* Customizable scrolling NTP-driven clock (only useful on a matrix with a minimum height of 7 pixel). Can be combined with the other effects.
+* Customizable scrolling text (only useful on a matrix with a minimum height of 7 pixel). Can be combined with the other effects.
 * API to integrate the controller in existing home automation environments.
 * Firmware upgradeable via web interface.
 * Debug-Output can be viewed via telnet session.
 
 ## Used libraries / software
 
-Fork of FastLED 3.1.3 library (included in this repo: see libraries-folder!):
-https://github.com/coryking/FastLED
-
+* [Fork of FastLED 3.1.3 library](https://github.com/coryking/FastLED) (included in this repo: see libraries-folder!).
 We are using this fork because it supports DMA which removes flicker issues. Enabled via `#define FASTLED_ESP8266_DMA`. You must use pin 3 for your LED stripe!
-
-RemoteDebug (debug output is visible via a telnet session rather than printing to serial):
-https://github.com/JoaoLopesF/RemoteDebug
-
-LEDMatrix by Aaron Liddiment (included in this repo: see libraries-folder!):
-https://github.com/AaronLiddiment/LEDMatrix
-
-LEDText by Aaron Liddiment (included in this repo: see libraries-folder!):
-https://github.com/AaronLiddiment/LEDText
-
-NTPClient
-https://github.com/arduino-libraries/NTPClient
+* [RemoteDebug](https://github.com/JoaoLopesF/RemoteDebug): Debug output is visible via a telnet session rather than printing to serial):
+* [LEDMatrix by Aaron Liddiment](https://github.com/AaronLiddiment/LEDMatrix) (included in this repo: see libraries-folder!).
+* [LEDText by Aaron Liddiment](https://github.com/AaronLiddiment/LEDText) (included in this repo: see libraries-folder!).
+* [NTPClient](https://github.com/arduino-libraries/NTPClient)
 
 ## How to start
 
@@ -71,9 +63,11 @@ WiFi config, settings and uploaded files will stay untouched.
 
 ### API-Endpoints:
 
-1. `/set_brightness`: Set overall brightness. Possible parameters: Brightness in percent `?c=(0-100)` or absolute brightness `?p=(0-255)`.
-1. `/set_clock_brightness`: Set brightness of the clock. Possible parameters: Brightness in percent `?c=(0-100)` or absolute brightness `?p=(0-255)`.
-1. `/set_clock`: Show clock. Possible parameters: Turn on `?s=1` (clock runs immediately) or turn off `?s=0`.
+1. `/set_brightness`: Set overall brightness. Possible parameters: Brightness in percent `c=(0-100)` or absolute brightness `p=(0-255)`.
+1. `/set_clock_brightness`: Set brightness of the clock. Possible parameters: Brightness in percent `c=(0-100)` or absolute brightness `p=(0-255)`.
+1. `/set_clock`: Show clock. Possible parameters: Turn on `s=1` (clock runs immediately) or turn off `s=0`.
+1. `/set_text`: Show text. Possible parameters: Turn on `s=1` (text runs immediately) or turn off `s=0`.
+1. `/update_text`: Updates custom scrolling text and display it once. Parameters: `text=(Max. 255 chars of text)` and (optional) `color=(0-6)`.
 1. `/get_brightness`: Returns the current overall brightness in percent.
 1. `/get_clock_brightness`: Returns the current brightness of the clock in percent.
 1. `/get_switch`: Returns `0` if current mode is `OFF`, otherwise `1`.
@@ -108,7 +102,7 @@ WiFi config, settings and uploaded files will stay untouched.
 
 ## License
 
-As per the original [McLighting](https://github.com/toblum/McLighting) and [Jake's "Grisworld"](https://github.com/jake-b/Griswold-LED-Controller) project, this project is released under the GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007.
+This project is released under the GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007.
 
 	Griswold is free software: you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as 

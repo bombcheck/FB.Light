@@ -126,9 +126,9 @@ void setup() {
   ///*** Random Seed***
   randomSeed(analogRead(0));
 
-#ifndef REMOTE_DEBUG
-  DBG_OUTPUT_PORT.begin(115200);
-#endif
+  #ifndef REMOTE_DEBUG
+    DBG_OUTPUT_PORT.begin(115200);
+  #endif
   DBG_OUTPUT_PORT.printf("system_get_cpu_freq: %d\n", system_get_cpu_freq());
 
   // set builtin led pin as output
@@ -148,16 +148,19 @@ void setup() {
   FastLED.setMaxRefreshRate(FASTLED_HZ);
 
   // tell FastLED about the LED strip configuration
-  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds[0], leds.Size())
+  #ifdef CLK_PIN
+    FastLED.addLeds<LED_TYPE, DATA_PIN, CLK_PIN, COLOR_ORDER>(leds[0], leds.Size())
       .setCorrection(TypicalLEDStrip);
-  
-  // FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds,
-  // NUM_LEDS).setCorrection(TypicalLEDStrip);
+  #else
+    FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds[0], leds.Size())
+      .setCorrection(TypicalLEDStrip);
+  #endif
+
   // set master brightness control
   FastLED.setBrightness(settings.overall_brightness);
 
-  // Initialize stuff for scrolling text (clock)
-  for (int i=0; i < CLOCK_DATA_PREFIX_COUNT; i++) ClockDataPrefix += " ";
+  // Initialize stuff for scrolling text
+  for (int i=0; i < TEXT_DATA_PREFIX_COUNT; i++) TextDataPrefix += " ";
   ScrollingMsg.SetFont(MatriseFontData);
   ScrollingMsg.Init(&leds, leds.Width(), leds.Height(), 0, 0);
   ScrollingMsg.SetScrollDirection(SCROLL_LEFT);
@@ -386,6 +389,47 @@ void setup() {
     getStatusJSON();
   });
 
+  server.on("/set_text", []() {
+    if (server.arg("s").toInt() ==  1) {
+      settings.show_text = true;
+      textAppearTimer = 0;
+    } 
+    else {
+      settings.show_text = false;
+      textAppearTimer = 0;
+    } 
+
+    getStatusJSON();
+  });
+
+  server.on("/update_text", []() {
+    if (server.arg("text") ==  "") {
+    server.send(200, "text/plain", "Error: Paramter 'text' is missing!");
+    } 
+    else {
+      if (server.arg("color") !=  "") {
+        settings.text_color = server.arg("color").toInt();
+        if (settings.text_color > 6) {
+          settings.text_color = 6;
+        }
+        if (settings.text_color < 0) {
+          settings.text_color = 0;
+        }
+      }
+      
+      if (server.arg("text").length() > 255) {
+        server.send(200, "text/plain", "Error: Text can not have more than 255 characters!"); 
+      }
+      else {
+        server.arg("text").toCharArray(settings.text_msg,server.arg("text").length() + 1);
+        settings.text_length = server.arg("text").length();
+        textAppearTimer = 0;
+        if (settings.show_text == false) TextLoaded = true;
+        server.send(200, "text/plain", "OK: Loaded scrolling text '" + server.arg("text") + "' with color " + settings.text_color + ".");
+      }
+   } 
+  });
+
   server.on("/get_brightness", []() {
     String str_brightness = String((int)(settings.overall_brightness / 2.55));
     server.send(200, "text/plain", str_brightness);
@@ -584,6 +628,7 @@ server.on("/fire", []() {
   server.begin();
 
   clockAppearTimer = millis() + (settings.clock_timer * 1000);
+  textAppearTimer = millis() + (settings.text_timer * 1000);
 }
 
 void loop() {
@@ -664,7 +709,7 @@ void loop() {
       fire2012();
       break;
 
-      case FIRE_RAINBOW:
+    case FIRE_RAINBOW:
       fire_rainbow();
       break;
 
@@ -707,8 +752,17 @@ void loop() {
   }
 
   // Init clock if enabled and not currently running
-  if (settings.show_clock == true && showClock == false && clockAppearTimer <= millis()) {
-    initClock();    
+  if (settings.show_clock == true && showClock == false && showText == false && TextLoaded == false && clockAppearTimer <= millis()) {
+    initClock();
+  }
+
+  if (settings.show_text == true && showClock == false && showText == false && TextLoaded == false && textAppearTimer <= millis()) {
+    initText();
+  }
+
+  // Init loaded text if clock is not running (preview)
+  if (TextLoaded == true && showClock == false && showText == false) {
+    initText();
   }
   
   // Get the current time
@@ -717,14 +771,20 @@ void loop() {
   do {
     //long int now = micros();
 
-    // Handle clock if running
-    if (showClock == true) {
+    // Handle clock or text if neccessary
+    if (showClock == true || showText == true) {
       if (ScrollingMsg.UpdateText() == -1) {
-        clockAppearTimer = millis() + (settings.clock_timer * 1000);  
-        showClock = false;
+        if (showClock == true) {
+          clockAppearTimer = millis() + (settings.clock_timer * 1000);
+          showClock = false;
+        }
+        if (showText == true) {
+          textAppearTimer = millis() + (settings.text_timer * 1000);
+          showText = false;
+        }
       }
     }
-    
+
     FastLED.show();         // Display whats rendered.    
     //long int later = micros();
     //DBG_OUTPUT_PORT.printf("Show time is %ld\n", later-now);

@@ -45,6 +45,16 @@ typedef struct {
   uint8_t clock_dim = 100;          // Brightness of background (effects) during clock-run
   int8_t clock_offset = 1;          // Time-Offset for clock
   uint8_t clock_color = 0;          // Color of the clock
+
+  bool show_text = false;   // Global to add / remove re-occuring textmessage
+  char text_msg[266];              // Textmessage
+  uint8_t text_length = 0;         // Length of text
+  uint16_t text_timer = 15;        // How often should the textmessage appear?
+  uint8_t text_brightness = 130;   // Textmessage Brightness
+  uint8_t text_speed = 25;         // Textmessage Speed
+  uint8_t text_dim = 100;          // Brightness of background (effects) during textmessage-run
+  uint8_t text_color = 0;          // Color of textmessage
+  
   uint8_t filler[46];  // in case adding data in config avoiding loosing current conf by bad crc
   uint16_t crc;
 } EEPROMSettings;
@@ -83,6 +93,17 @@ void loadDefaults() {
   settings.clock_dim = 100;
   settings.clock_offset = 1;
   settings.clock_color = 0;
+
+  settings.show_text = false;
+  
+  String msg = "FB.Light";
+  msg.toCharArray(settings.text_msg,msg.length() + 1);
+  settings.text_length = msg.length();
+  settings.text_timer = 15;
+  settings.text_brightness = 130;
+  settings.text_speed = 25;
+  settings.text_dim = 100;
+  settings.text_color = 0;
 }
 
 bool readSettings(bool clear_on_error) {
@@ -199,7 +220,21 @@ void printSettings() {
                          settings.clock_offset);
   DBG_OUTPUT_PORT.printf("clock_color:         %d\n",
                          settings.clock_color);
-}
+  DBG_OUTPUT_PORT.printf("show_text:         %d\n",
+                         settings.show_text);
+  DBG_OUTPUT_PORT.printf("text_msg:         %s\n",
+                         settings.text_msg);
+  DBG_OUTPUT_PORT.printf("text_color:         %d\n",
+                         settings.text_color);
+  DBG_OUTPUT_PORT.printf("text_brightness:         %d\n",
+                         settings.text_brightness);
+  DBG_OUTPUT_PORT.printf("text_speed:         %d\n",
+                         settings.text_speed);
+  DBG_OUTPUT_PORT.printf("text_dim:         %d\n",
+                         settings.text_dim);
+  DBG_OUTPUT_PORT.printf("text_timer:         %d\n",
+                         settings.text_timer);
+  }
 
 void initSettings() {
   EEPROM.begin(sizeof(EEPROMSettings));
