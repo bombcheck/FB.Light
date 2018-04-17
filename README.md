@@ -4,7 +4,7 @@ Based upon [doctormord's](https://github.com/doctormord/Responsive_LED_Control) 
 
 ![Confetti-Mode](https://breakout.bernis-hideout.de/git/FB.Light/confetti_1_small.gif)
 ![Juggle-Mode](https://breakout.bernis-hideout.de/git/FB.Light/juggle_small.gif)
-![Confetti-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/confetti_clock_small.gif)
+![Confetti-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/confetti_clock_small_2.gif)
 ![BPM-Mode with clock](https://breakout.bernis-hideout.de/git/FB.Light/bpm_clock_small.gif)
 
 ## Features
