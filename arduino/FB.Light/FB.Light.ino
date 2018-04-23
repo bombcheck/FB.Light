@@ -376,6 +376,22 @@ void setup() {
     getStatusJSON();
   });
 
+  server.on("/set_text_brightness", []() {
+    if (server.arg("c").toInt() > 0) {
+      settings.text_brightness = (int)server.arg("c").toInt() * 2.55;
+    } else {
+      settings.text_brightness = server.arg("p").toInt();
+    }
+    if (settings.text_brightness > 255) {
+      settings.text_brightness = 255;
+    }
+    if (settings.text_brightness < 0) {
+      settings.text_brightness = 0;
+    }
+
+    getStatusJSON();
+  });
+
   server.on("/set_clock", []() {
     if (server.arg("s").toInt() ==  1) {
       settings.show_clock = true;
@@ -442,6 +458,13 @@ void setup() {
     server.send(200, "text/plain", str_clock_brightness);
     DBG_OUTPUT_PORT.print("/get_clock_brightness: ");
     DBG_OUTPUT_PORT.println(str_clock_brightness);
+  });
+
+  server.on("/get_text_brightness", []() {
+    String str_text_brightness = String((int)(settings.text_brightness / 2.55));
+    server.send(200, "text/plain", str_text_brightness);
+    DBG_OUTPUT_PORT.print("/get_text_brightness: ");
+    DBG_OUTPUT_PORT.println(str_text_brightness);
   });
 
   server.on("/get_switch", []() {

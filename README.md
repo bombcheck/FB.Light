@@ -67,9 +67,11 @@ WiFi config, settings and uploaded files will stay untouched.
 1. `/set_clock_brightness`: Set brightness of the clock. Possible parameters: Brightness in percent `c=(0-100)` or absolute brightness `p=(0-255)`.
 1. `/set_clock`: Show clock. Possible parameters: Turn on `s=1` (clock runs immediately) or turn off `s=0`.
 1. `/set_text`: Show text. Possible parameters: Turn on `s=1` (text runs immediately) or turn off `s=0`.
+1. `/set_text_brightness`: Set brightness of the scrolling text. Possible parameters: Brightness in percent `c=(0-100)` or absolute brightness `p=(0-255)`.
 1. `/update_text`: Updates custom scrolling text and display it once. Parameters: `text=(Max. 255 chars of text)` and (optional) `color=(0-6)`.
 1. `/get_brightness`: Returns the current overall brightness in percent.
 1. `/get_clock_brightness`: Returns the current brightness of the clock in percent.
+1. `/get_text_brightness`: Returns the current brightness of the scrolling text in percent.
 1. `/get_switch`: Returns `0` if current mode is `OFF`, otherwise `1`.
 1. `/get_color`: Returns the current main color in HEX.
 1. `/status`: Returns JSON of current settings.
