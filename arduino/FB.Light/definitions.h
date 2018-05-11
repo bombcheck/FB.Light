@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.01.b18"
+#define FW_VERSION "00.09.01.b19"
 #define HOSTNAME_PREFIX "FB-Light"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer

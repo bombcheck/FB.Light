@@ -774,11 +774,17 @@ void loop() {
     addGlitter(settings.glitter_density);
   }
 
+  //Update NTP-Time if clock is active
+  if (settings.show_clock == true) {
+    timeClient.update();
+  }
+
   // Init clock if enabled and not currently running
   if (settings.show_clock == true && showClock == false && showText == false && TextLoaded == false && clockAppearTimer <= millis()) {
     initClock();
   }
 
+  // Init text if enabled and not currently running
   if (settings.show_text == true && showClock == false && showText == false && TextLoaded == false && textAppearTimer <= millis()) {
     initText();
   }
@@ -790,6 +796,7 @@ void loop() {
   
   // Get the current time
   unsigned long continueTime = millis() + int(float(1000 / settings.fps));  
+
   // Do our main loop functions, until we hit our wait time
   do {
     //long int now = micros();
@@ -837,9 +844,6 @@ void loop() {
     }
     
   } while (millis() < continueTime);
-
-  //Update NTP-Time
-  timeClient.update();
 }
 
 void nextPattern() {
