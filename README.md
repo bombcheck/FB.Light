@@ -81,7 +81,7 @@ WiFi config, settings and uploaded files will stay untouched.
 
 ### Set Mode via API:
 
-1. `/off`: OFF
+1. `/off`: OFF (even glitter, clock and text are disabled)
 1. `/rainbow`: RAINBOW
 1. `/confetti`: CONFETTI
 1. `/sinelon`: SINELON
@@ -101,6 +101,7 @@ WiFi config, settings and uploaded files will stay untouched.
 1. `/caleidoscope2`: CALEIDOSCOPE 2
 1. `/caleidoscope3`: CALEIDOSCOPE 3
 1. `/caleidoscope4`: CALEIDOSCOPE 4
+1. `/blank`: BLANK (same as OFF but with glitter, clock and text enabled)
 
 ## License
 
