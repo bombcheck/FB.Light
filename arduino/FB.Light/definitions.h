@@ -21,7 +21,7 @@
 /// Serial
 #define DEBUG_WEBSOCKETS(...) Serial.printf( __VA_ARGS__ )
 
-#define FW_VERSION "00.09.01.b19"
+#define FW_VERSION "00.09.01.b20"
 #define HOSTNAME_PREFIX "FB-Light"
 
 #define HTTP_OTA       // If defined, enable Added ESP8266HTTPUpdateServer
@@ -78,7 +78,8 @@ enum MODE { HOLD,
     CALEIDOSCOPE1,
     CALEIDOSCOPE2,
     CALEIDOSCOPE3,
-    CALEIDOSCOPE4,};
+    CALEIDOSCOPE4,
+    BLANK,};
     
 enum DIRECTION {
   BACK = 0,

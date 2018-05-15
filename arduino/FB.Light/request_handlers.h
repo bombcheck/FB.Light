@@ -357,6 +357,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         if (str_mode.startsWith("=off")) {
           settings.mode = OFF;
         }
+        if (str_mode.startsWith("=blank")) {
+          settings.mode = BLANK;
+        }
         if (str_mode.startsWith("=all")) {
           settings.mode = ALL;
         }

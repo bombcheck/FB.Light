@@ -440,7 +440,7 @@ void setup() {
         server.arg("text").toCharArray(settings.text_msg,server.arg("text").length() + 1);
         settings.text_length = server.arg("text").length();
         textAppearTimer = 0;
-        if (settings.show_text == false) TextLoaded = true;
+        if (settings.show_text == false || settings.mode == OFF) TextLoaded = true;
         server.send(200, "text/plain", "OK: Loaded scrolling text '" + server.arg("text") + "' with color " + settings.text_color + ".");
       }
    } 
@@ -502,6 +502,13 @@ void setup() {
   server.on("/off", []() {
     //exit_func = true;
     settings.mode = OFF;
+    getArgs();
+    getStatusJSON();
+  });
+
+  server.on("/blank", []() {
+    //exit_func = true;
+    settings.mode = BLANK;
     getArgs();
     getStatusJSON();
   });
@@ -662,7 +669,8 @@ void loop() {
   // Simple statemachine that handles the different modes
   switch (settings.mode) {
     default:
-    case OFF: 
+    case OFF:
+    case BLANK:
       fill_solid(leds[0], NUM_LEDS, CRGB(0,0,0));
       break;
       
@@ -770,22 +778,22 @@ void loop() {
 }
 
   // Add glitter if necessary
-  if (settings.glitter_on == true) {
+  if (settings.glitter_on == true && settings.mode != OFF) {
     addGlitter(settings.glitter_density);
   }
 
   //Update NTP-Time if clock is active
-  if (settings.show_clock == true) {
+  if (settings.show_clock == true && settings.mode != OFF) {
     timeClient.update();
   }
 
   // Init clock if enabled and not currently running
-  if (settings.show_clock == true && showClock == false && showText == false && TextLoaded == false && clockAppearTimer <= millis()) {
+  if (settings.mode != OFF && settings.show_clock == true && showClock == false && showText == false && TextLoaded == false && clockAppearTimer <= millis()) {
     initClock();
   }
 
   // Init text if enabled and not currently running
-  if (settings.show_text == true && showClock == false && showText == false && TextLoaded == false && textAppearTimer <= millis()) {
+  if (settings.mode != OFF && settings.show_text == true && showClock == false && showText == false && TextLoaded == false && textAppearTimer <= millis()) {
     initText();
   }
 
