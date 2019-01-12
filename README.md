@@ -82,6 +82,7 @@ WiFi config, settings and uploaded files will stay untouched.
 ### Set Mode via API:
 
 1. `/off`: OFF (even glitter, clock and text are disabled)
+1. `/all`: SOLID COLOR (set color via additional parameter: `rgb=#COLORHEXVALUE` or `r=0-255`, `g=0-255`, `b=0-255`)
 1. `/rainbow`: RAINBOW
 1. `/confetti`: CONFETTI
 1. `/sinelon`: SINELON
